@@ -5574,7 +5574,7 @@ function getJson($server_id){
     
     if(!$loginResponse['success']){
         curl_close($curl);
-        return $loginResponse;
+        return json_decode(json_encode(['success' => false, 'msg' => 'Login failed']));
     }
     if($serverType == "sanaei") $url = "$panel_url/panel/api/inbounds/list";
     else $url = "$panel_url/xui/inbound/list";
@@ -5609,7 +5609,16 @@ function getJson($server_id){
         $response = curl_exec($curl);
     }
     curl_close($curl);
-    return json_decode($response);
+    
+    // Decode and ensure we return a proper object structure
+    $decoded = json_decode($response);
+    
+    // If response doesn't have the expected structure, create one
+    if (!$decoded || !isset($decoded->success)) {
+        return json_decode(json_encode(['success' => false, 'msg' => 'Invalid response from panel']));
+    }
+    
+    return $decoded;
 }
 function getNewCert($server_id){
     global $connection;
