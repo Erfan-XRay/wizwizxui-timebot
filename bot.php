@@ -6218,10 +6218,12 @@ if(preg_match('/sConfigRenew(\d+)/', $data,$match)){
         $stmt = $connection->prepare("SELECT * FROM `server_plans` WHERE `server_id` = ? AND `custom_sni` LIKE '%inbounds%' AND `active` = 1 AND `price` != 0");
         $stmt->bind_param("i", $server_id);
     }else{
-        $response = getJson($server_id)->obj;
-        if($response == null){delMessage(); exit();}
+        $response = getJson($server_id);
+        // Handle both old and new API structures
+        $inbounds = isset($response->obj) ? $response->obj : (isset($response->data) ? $response->data : null);
+        if($inbounds == null){delMessage(); exit();}
         if($inboundId == 0){
-            foreach($response as $row){
+            foreach($inbounds as $row){
                 $clients = json_decode($row->settings)->clients;
                 if($clients[0]->id == $uuid || $clients[0]->password == $uuid) {
                     $port = $row->port;
@@ -6354,11 +6356,13 @@ if(preg_match('/sConfigUpdate(\d+)/', $data,$match)){
         $info = getMarzbanUserInfo($server_id, $remark);
         $vraylink = $info->links;
     }else{
-        $response = getJson($server_id)->obj;
-        if($response == null){delMessage(); exit();}
+        $response = getJson($server_id);
+        // Handle both old and new API structures
+        $inbounds = isset($response->obj) ? $response->obj : (isset($response->data) ? $response->data : null);
+        if($inbounds == null){delMessage(); exit();}
         
         if($inboundId == 0){
-            foreach($response as $row){
+            foreach($inbounds as $row){
                 $clients = json_decode($row->settings)->clients;
                 if($clients[0]->id == $uuid || $clients[0]->password == $uuid) {
                     $port = $row->port;
@@ -6603,8 +6607,21 @@ if(preg_match('/(addNewRahgozarPlan|addNewPlan|addNewMarzbanPlan)/',$userInfo['s
         $stmt->close();
 
         
-        $response = getJson($res['server_id'])->obj;
-        foreach($response as $row){
+        $response = getJson($res['server_id']);
+        // Handle both old (v1.7.9: ->obj) and new (v2.8.5: ->data) API response structures
+        $inbounds = null;
+        if (isset($response->obj)) {
+            $inbounds = $response->obj;
+        } elseif (isset($response->data)) {
+            $inbounds = $response->data;
+        }
+        
+        if (is_null($inbounds)) {
+            sendMessage("خطا در دریافت لیست کانفیگ‌ها از پنل");
+            exit();
+        }
+        
+        foreach($inbounds as $row){
             if($row->id == $text) {
                 $netType = json_decode($row->streamSettings)->network;
             }
@@ -7351,8 +7368,10 @@ if(preg_match('/changeNetworkType(\d+)_(\d+)/', $data, $match)){
     $server_id = $order['server_id'];
     $price = $order['amount'];
     
-    $response = getJson($server_id)->obj;
-    foreach($response as $row){
+    $response = getJson($server_id);
+    // Handle both old and new API structures  
+    $inbounds = isset($response->obj) ? $response->obj : (isset($response->data) ? $response->data : []);
+    foreach($inbounds as $row){
         $clients = json_decode($row->settings)->clients;
         if($clients[0]->id == $uuid || $clients[0]->password == $uuid) {
             $total = $row->total;
@@ -7637,8 +7656,10 @@ if(preg_match('/changeAccProtocol(\d+)_(\d+)_(.*)/', $data,$match)){
     $customPort = $file_detail['custom_port'];
     $customSni = $file_detail['custom_sni'];
     
-    $response = getJson($server_id)->obj;
-    foreach($response as $row){
+    $response = getJson($server_id);
+    // Handle both old and new API structures
+    $inbounds = isset($response->obj) ? $response->obj : (isset($response->data) ? $response->data : []);
+    foreach($inbounds as $row){
         $clients = json_decode($row->settings)->clients;
         if($clients[0]->id == $uuid || $clients[0]->password == $uuid) {
             $total = $row->total;
