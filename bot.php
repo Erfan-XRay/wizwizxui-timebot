@@ -6608,26 +6608,42 @@ if(preg_match('/(addNewRahgozarPlan|addNewPlan|addNewMarzbanPlan)/',$userInfo['s
 
         
         $response = getJson($res['server_id']);
-        // Handle both old (v1.7.9: ->obj) and new (v2.8.5: ->data) API response structures
+        
+        // Debug: Check if response is valid
+        if (!$response || !isset($response->success)) {
+            sendMessage("⚠️ خطا در اتصال به پنل. لطفاً تنظیمات سرور را بررسی کنید.");
+            exit();
+        }
+        
+        if (!$response->success) {
+            sendMessage("❌ پنل خطا برگرداند: " . ($response->msg ?? "خطای ناشناخته"));
+            exit();
+        }
+        
+        // Handle both old (v1.7.9: ->obj) and new (v2.8.5: ->data or direct array) API response structures
         $inbounds = null;
         if (isset($response->obj)) {
             $inbounds = $response->obj;
         } elseif (isset($response->data)) {
             $inbounds = $response->data;
+        } elseif (is_array($response)) {
+            $inbounds = $response;
         }
         
-        if (is_null($inbounds)) {
-            sendMessage("خطا در دریافت لیست کانفیگ‌ها از پنل");
+        if (is_null($inbounds) || (is_array($inbounds) && count($inbounds) == 0)) {
+            sendMessage("⚠️ هیچ کانفیگی در پنل یافت نشد. لطفاً ابتدا یک inbound ایجاد کنید.");
             exit();
         }
         
+        $netType = null;
         foreach($inbounds as $row){
             if($row->id == $text) {
                 $netType = json_decode($row->streamSettings)->network;
+                break;
             }
         }        
         if(is_null($netType)){
-            sendMessage("کانفیگی با این سطر آیدی یافت نشد");
+            sendMessage("⚠️ کانفیگی با سطر آیدی $text یافت نشد. لطفاً آیدی را از پنل بررسی کنید.");
             exit();
         }
         
