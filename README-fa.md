@@ -22,6 +22,10 @@
 
 <p align="center">
 فروش آسان با <a href="https://github.com/wizwizdev/wizwizxui-timebot">ویزویز</a> نصب فقط با یک دستور
+
+> [!NOTE]
+> **این نسخه توسط [ErfanXRay](https://github.com/Erfan-XRay) آپگرید و پشتیبانی می‌شود.**
+> شامل پشتیبانی از آخرین نسخه‌های پنل سنایی و بهبودهای دیگر.
 </p>
 
 <p align="center">

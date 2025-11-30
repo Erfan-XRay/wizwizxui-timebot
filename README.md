@@ -22,6 +22,10 @@
 
 <p align="center">
 Easy to sell with <a href="https://github.com/wizwizdev/wizwizxui-timebot">wizwizxui-timebot</a> easy install with few clicks
+
+> [!NOTE]
+> **This version has been upgraded and maintained by [ErfanXRay](https://github.com/Erfan-XRay).**
+> It includes support for the latest Sanaei X-UI versions and other improvements.
 </p>
 
 <p align="center">
