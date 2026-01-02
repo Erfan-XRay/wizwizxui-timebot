@@ -6233,10 +6233,16 @@ if(preg_match('/sConfigRenew(\d+)/', $data,$match)){
             $stmt = $connection->prepare("SELECT * FROM `server_plans` WHERE `server_id` = ? AND `inbound_id` = 0 AND `protocol` = ? AND `active` = 1 AND `price` != 0 AND `rahgozar` = 0");
         }else{
             foreach($response as $row){
-                if($row->id == $inboundId) {
-                    $port = $row->port;
-                    $protocol = $row->protocol;
-                    $configReality = json_decode($row->streamSettings)->security == "reality"?"true":"false";
+                $rowId = is_object($row) ? $row->id : (isset($row['id']) ? $row['id'] : null);
+                // Compare with both string and int versions
+                if($rowId == $inboundId || strval($rowId) == strval($inboundId)){
+                    $port = is_object($row) ? $row->port : $row['port'];
+                    $protocol = is_object($row) ? $row->protocol : $row['protocol'];
+                    $streamSettings = is_object($row) ? 
+                        (is_string($row->streamSettings) ? json_decode($row->streamSettings) : $row->streamSettings) :
+                        (is_string($row['streamSettings']) ? json_decode($row['streamSettings']) : $row['streamSettings']);
+                    $configReality = (is_object($streamSettings) && isset($streamSettings->security) && $streamSettings->security == "reality") || 
+                                    (is_array($streamSettings) && isset($streamSettings['security']) && $streamSettings['security'] == "reality") ? "true" : "false";
                     break;
                 }
             }
@@ -6369,10 +6375,15 @@ if(preg_match('/sConfigUpdate(\d+)/', $data,$match)){
             }
         }else{
             foreach($response as $row){
-                if($row->id == $inboundId) {
-                    $port = $row->port;
-                    $protocol = $row->protocol;
-                    $netType = json_decode($row->streamSettings)->network;
+                $rowId = is_object($row) ? $row->id : (isset($row['id']) ? $row['id'] : null);
+                // Compare with both string and int versions
+                if($rowId == $inboundId || strval($rowId) == strval($inboundId)){
+                    $port = is_object($row) ? $row->port : $row['port'];
+                    $protocol = is_object($row) ? $row->protocol : $row['protocol'];
+                    $streamSettings = is_object($row) ? 
+                        (is_string($row->streamSettings) ? json_decode($row->streamSettings) : $row->streamSettings) :
+                        (is_string($row['streamSettings']) ? json_decode($row['streamSettings']) : $row['streamSettings']);
+                    $netType = is_object($streamSettings) ? $streamSettings->network : (isset($streamSettings['network']) ? $streamSettings['network'] : null);
                     break;
                 }
             }
@@ -6603,14 +6614,44 @@ if(preg_match('/(addNewRahgozarPlan|addNewPlan|addNewMarzbanPlan)/',$userInfo['s
         $stmt->close();
 
         
-        $response = getJson($res['server_id'])->obj;
-        foreach($response as $row){
-            if($row->id == $text) {
-                $netType = json_decode($row->streamSettings)->network;
+        $jsonResponse = getJson($res['server_id']);
+        if(!$jsonResponse || !isset($jsonResponse->success) || !$jsonResponse->success){
+            sendMessage("❌ خطا در ارتباط با پنل. لطفا دوباره تلاش کنید.");
+            exit();
+        }
+        
+        $response = $jsonResponse->obj;
+        $netType = null;
+        
+        // Convert text to both string and int for comparison (API might return id as string or int)
+        $textAsInt = intval($text);
+        $textAsString = strval($text);
+        
+        if(is_array($response)){
+            foreach($response as $row){
+                // Handle both object and array structures
+                $rowId = is_object($row) ? $row->id : (isset($row['id']) ? $row['id'] : null);
+                
+                // Compare with both string and int versions
+                if($rowId == $textAsInt || $rowId == $textAsString || strval($rowId) == $textAsString){
+                    if(is_object($row)){
+                        $streamSettings = is_string($row->streamSettings) ? json_decode($row->streamSettings) : $row->streamSettings;
+                    } else {
+                        $streamSettings = is_string($row['streamSettings']) ? json_decode($row['streamSettings']) : $row['streamSettings'];
+                    }
+                    
+                    if(is_object($streamSettings) && isset($streamSettings->network)){
+                        $netType = $streamSettings->network;
+                    } elseif(is_array($streamSettings) && isset($streamSettings['network'])){
+                        $netType = $streamSettings['network'];
+                    }
+                    break;
+                }
             }
-        }        
+        }
+        
         if(is_null($netType)){
-            sendMessage("کانفیگی با این سطر آیدی یافت نشد");
+            sendMessage("❌ کانفیگی با این سطر آیدی یافت نشد. لطفا آیدی را دوباره بررسی کنید.");
             exit();
         }
         
@@ -7438,12 +7479,17 @@ if(preg_match('/updateConfigConnectionLink(\d+)/', $data,$match)){
             }
         }else{
             foreach($response as $row){
-                if($row->id == $inboundId) {
-                    $iId = $row->id;
-                    $inboundRemark = $row->remark;
-                    $port = $row->port;
-                    $protocol = $row->protocol;
-                    $netType = json_decode($row->streamSettings)->network;
+                $rowId = is_object($row) ? $row->id : (isset($row['id']) ? $row['id'] : null);
+                // Compare with both string and int versions
+                if($rowId == $inboundId || strval($rowId) == strval($inboundId)){
+                    $iId = $rowId;
+                    $inboundRemark = is_object($row) ? $row->remark : $row['remark'];
+                    $port = is_object($row) ? $row->port : $row['port'];
+                    $protocol = is_object($row) ? $row->protocol : $row['protocol'];
+                    $streamSettings = is_object($row) ? 
+                        (is_string($row->streamSettings) ? json_decode($row->streamSettings) : $row->streamSettings) :
+                        (is_string($row['streamSettings']) ? json_decode($row['streamSettings']) : $row['streamSettings']);
+                    $netType = is_object($streamSettings) ? $streamSettings->network : (isset($streamSettings['network']) ? $streamSettings['network'] : null);
                     break;
                 }
             }
@@ -7522,9 +7568,11 @@ if(preg_match('/changAccountConnectionLink(\d+)/', $data,$match)){
             $update_response = renewInboundUuid($server_id, $uuid);
         }else{
             foreach($response as $row){
-                if($row->id == $inboundId) {
-                    $port = $row->port; 
-                    $protocol = $row->protocol;
+                $rowId = is_object($row) ? $row->id : (isset($row['id']) ? $row['id'] : null);
+                // Compare with both string and int versions
+                if($rowId == $inboundId || strval($rowId) == strval($inboundId)){
+                    $port = is_object($row) ? $row->port : $row['port']; 
+                    $protocol = is_object($row) ? $row->protocol : $row['protocol'];
                     $netType = json_decode($row->streamSettings)->network;
                     break;
                 }
