@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://github.com/wizwizdev/wizwizxui-timebot" target="_blank" rel="noopener noreferrer">
+  <a href="https://github.com/Erfan-XRay/wizwizxui-timebot" target="_blank" rel="noopener noreferrer">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="https://user-images.githubusercontent.com/27927279/227711552-d2bc1089-5666-477b-9be7-d7e50a5286dc.png">
       <img width="200" height="200" src="https://user-images.githubusercontent.com/27927279/227711552-d2bc1089-5666-477b-9be7-d7e50a5286dc.png">
@@ -15,28 +15,23 @@
 	<a href="./README-fa.md">
 	فارسی
 	</a>
-
 </p>
 
-<h1 align="center"/>ویزویز</h1>
+<h1 align="center">ویزویز XUI TimeBot</h1>
 
 <p align="center">
-فروش آسان با <a href="https://github.com/wizwizdev/wizwizxui-timebot">ویزویز</a> نصب فقط با یک دستور
+فروش آسان با <a href="https://github.com/Erfan-XRay/wizwizxui-timebot">ویزویز</a> - نصب فقط با یک دستور
 </p>
 
 <p align="center">
-ویزویز یک ربات قدرتمند و حرفه ای است که از چندین نوع پنل پشتیبانی می کند و بهترین گزینه برای فروش است، اکثر پروتکل ها را پشتیبانی می کند و نصب آسانی دارد. این ربات برای مردم عزیز ایران آماده شده است. یک جایگزین عالی برای فروش است تا بتوانید به راحتی کار خود را مدیریت کنید.
+ویزویز یک ربات قدرتمند و حرفه‌ای است که برای مدیریت و فروش سرویس‌های VPN طراحی شده است. این نسخه به‌طور اختصاصی از <strong>پنل Sanaei XUI</strong> پشتیبانی می‌کند و بهترین گزینه برای فروش است. اکثر پروتکل‌ها را پشتیبانی می‌کند و نصب آسانی دارد.
 </p>
-
 
 <div align=center>
 
-[![Telegram Channel](https://img.shields.io/endpoint?label=Channel&style=flat-square&url=https%3A%2F%2Ftg.sumanjay.workers.dev%2Fwizwizch&color=blue)](https://telegram.dog/wizwizch)
-[![Telegram Group](https://img.shields.io/endpoint?color=neon&label=Support%20Group&style=flat-square&url=https%3A%2F%2Ftg.sumanjay.workers.dev%2Fwizwizdev)](https://telegram.dog/wizwizdev)
-<img src="https://img.shields.io/github/license/wizwizdev/wizwizxui-timebot?style=flat-square" />
-<img src="https://img.shields.io/github/v/release/wizwizdev/wizwizxui-timebot.svg" />
-<!-- <img src="https://visitor-badge.glitch.me/badge?page_id=wizwizdev.wizwizdev" />
- -->
+[![GitHub](https://img.shields.io/github/license/Erfan-XRay/wizwizxui-timebot?style=flat-square)](https://github.com/Erfan-XRay/wizwizxui-timebot)
+[![GitHub release](https://img.shields.io/github/v/release/Erfan-XRay/wizwizxui-timebot.svg)](https://github.com/Erfan-XRay/wizwizxui-timebot/releases)
+
 </div>
 
 <br>
@@ -47,96 +42,90 @@
 <br>
 <br>
 
+## 📋 پیش‌نیازها
 
+- سرور Ubuntu 20.04 یا بالاتر
+- دسترسی root
+- دامنه با DNS تنظیم شده
+- پنل **Sanaei XUI** نصب شده (آخرین نسخه)
+- ربات تلگرام از @BotFather
 
+## 🚀 دستور نصب روی Ubuntu 20.04
 
+> ⚠️ **توجه:** این نسخه فقط از پنل **Sanaei XUI** پشتیبانی می‌کند
 
-
-
-# دستور نصب روی Ubuntu-20.4
-
-
-- اگر سرور شما دسترسی روت ندارد، لطفا با دستور sudo -i دسترسی روت بدهید و سپس نصب کنید
+- اگر سرور شما دسترسی root ندارد، لطفا با دستور `sudo -i` دسترسی root بدهید و سپس نصب کنید
 - یک ربات در @botfather ایجاد کنید و آن را استارت کنید
-- قبل از نصب حتما ip سرور را روی دامنه تنظیم کنید 
-> دستور نصب را در کنسول وارد کرده و موارد مورد نیاز را برای تکمیل نصب وارد کنید.
+- قبل از نصب حتما IP سرور را روی دامنه تنظیم کنید
+
+### نصب خودکار:
+
+```bash
+bash <(curl -s https://raw.githubusercontent.com/Erfan-XRay/wizwizxui-timebot/main/install.sh)
 ```
-bash <(curl -s https://raw.githubusercontent.com/wizwizdev/wizwizxui-timebot/main/wizwiz.sh)
+
+یا:
+
+```bash
+bash <(curl -s https://raw.githubusercontent.com/Erfan-XRay/wizwizxui-timebot/main/wizwiz.sh)
 ```
-- در مرحله اول «sub.domain.com» یا «domain.com» را بدون https وارد کنید
-- ایمیل را وارد کنید
-- کلمه y را وارد کنید
-- عدد 2 را وارد کنید
-- نام کاربری برای دیتابیس را وارد کنید
-- رمز عبور برای دیتابیس را وارد کنید
-- توکن ربات را وارد کنید
-- آیدی عددی ادمین را از @userinfobot بگیرید و وارد کنید
-- مجدد «sub.domain.com» یا «domain.com» را بدون https وارد کنید
-- بسیار خوب، پیام نصب ( ✅ ربات wizwiz با موفقیت نصب شد! ) به ربات ارسال می شود.
+
+### مراحل نصب:
+
+1. در مرحله اول «sub.domain.com» یا «domain.com» را بدون https وارد کنید
+2. ایمیل را وارد کنید
+3. کلمه `y` را وارد کنید
+4. عدد `2` را وارد کنید
+5. نام کاربری برای دیتابیس را وارد کنید
+6. رمز عبور برای دیتابیس را وارد کنید
+7. توکن ربات را وارد کنید
+8. آیدی عددی ادمین را از @userinfobot بگیرید و وارد کنید
+9. مجدد «sub.domain.com» یا «domain.com» را بدون https وارد کنید
+
+✅ بسیار خوب، پیام نصب ( ✅ ربات wizwiz با موفقیت نصب شد! ) به ربات ارسال می‌شود.
 
 <br>
 <br>
 
-## دستور آپدیت ربات - آپدیت پنل - بک آپ - حذف ویزویز
+## 🔄 دستور آپدیت ربات - آپدیت پنل - بک‌آپ - حذف ویزویز
 
-- با هر به روز رسانی و بک آپ، یک اعلان برای ربات مدیر ارسال می شود
+- با هر به‌روزرسانی و بک‌آپ، یک اعلان برای ربات مدیر ارسال می‌شود
 
-
-```
-bash <(curl -s https://raw.githubusercontent.com/wizwizdev/wizwizxui-timebot/main/update.sh)
+```bash
+bash <(curl -s https://raw.githubusercontent.com/Erfan-XRay/wizwizxui-timebot/main/update.sh)
 ```
 
 <br>
 <hr>
 <br>
-<br>
 
+## 🎯 پنل پشتیبانی شده
 
+این نسخه **فقط** از پنل **Sanaei XUI** پشتیبانی می‌کند:
 
-# پنل های پشتیبانی شده
+### نصب پنل Sanaei XUI:
 
-- (Marzban)
-````
-sudo bash -c "$(curl -sL https://github.com/Gozargah/Marzban-scripts/raw/master/marzban.sh)" @ install
-````
-- (Niduka Akalanka)
-````
-bash <(curl -Ls https://raw.githubusercontent.com/NidukaAkalanka/x-ui-english/master/install.sh) 0.2.1.2
-````
-- (Sanaei)
-````
+```bash
 bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh) v1.7.9
-````
-- (Alireza)
-````
-bash <(curl -Ls https://raw.githubusercontent.com/alireza0/x-ui/master/install.sh) 1.5.5
-````
-- (Vaxilu)
-````
-bash <(curl -Ls https://raw.githubusercontent.com/vaxilu/x-ui/master/install.sh)
-````
+```
 
-
+> ⚠️ **مهم:** لطفا پنل Sanaei XUI خود را به آخرین نسخه آپدیت کنید تا از API جدید پشتیبانی کند.
 
 <br>
 <hr>
 <br>
 
-
-# حمایت
+## 💰 حمایت
 
 - Tron (TRX): `TY8j7of18gbMtneB8bbL7SZk5gcntQEemG`
 - Bitcoin: `bc1qcnkjnqvs7kyxvlfrns8t4ely7x85dhvz5gqge4`
 - Dogecoin: `DMyGMghEh4W55P3VeVHntCN3vYAFtshvVH`
 
-
-
 <br>
 <hr>
 <br>
 
-
-# امکانات
+## ✨ امکانات
 
 - درگاه nowpayments - zarinpal - nextpay و ارزی ریالی
 - پشتیبانی از - xtls - tls - reality - Grpc - ws - tcp
@@ -145,9 +134,9 @@ bash <(curl -Ls https://raw.githubusercontent.com/vaxilu/x-ui/master/install.sh)
 - نمایش مشخصات کانفیگ به صورت ساب ( داخل نرم افزار v2ray )
 - نمایندگی ( خرید تکی و انبوه - مدیریت کانفیگ - آمار فروش و ... )
 - قابلیت جست و جو کانفیگ های خریداری شده برای دسترسی راحت ( نماینده )
-- نمایش مشخصات  کانفیگ به صورت وب
+- نمایش مشخصات کانفیگ به صورت وب ( رابط کاربری مدرن و ریسپانسیو )
 - دکمه ثبت لینک برای تمدید و به روزرسانی کانفیگ ( از بات خرید نشده )
-- دکمه دریافت QRcode کانفیگ 
+- دکمه دریافت QRcode کانفیگ
 - حذف کانفیگ توسط کاربر ( حذف از پنل x-ui و دیتابیس + اعلان حذف )
 - قابلیت اضافه کردن حجم و زمان روی سرور دلخواه + اعلان
 - قابلیت کسر موجودی از اعتبار کاربر
@@ -193,22 +182,31 @@ bash <(curl -Ls https://raw.githubusercontent.com/vaxilu/x-ui/master/install.sh)
 - قابلیت خاموش/روشن (همه ویژگی های ربات)
 - اطلاع رسانی اطلاعات خرید + تمدید و ... به صورت کامل به ربات ادمین
 
+<br>
+<hr>
+<br>
 
+## 🔧 تغییرات این نسخه
+
+این نسخه توسط **ErfanXRay** به‌روزرسانی و نگهداری می‌شود:
+
+- ✅ **فقط پشتیبانی از Sanaei XUI:** حذف پشتیبانی از پنل‌های دیگر (Marzban, Alireza, Niduka, Vaxilu)
+- ✅ **ساده‌سازی افزودن سرور:** فقط 4 مرحله (نام، پرچم، لینک پنل، نام کاربری و رمز عبور)
+- ✅ **بهبود ساخت پلن:** انتخاب Inbound از لیست سرور به جای ورود دستی
+- ✅ **پشتیبانی از API جدید:** سازگار با آخرین نسخه Sanaei XUI
+- ✅ **رابط کاربری مدرن:** رابط وب مدرن و ریسپانسیو برای نمایش اطلاعات کاربر
 
 <br>
 <hr>
 <br>
 
+## 📞 تماس با توسعه‌دهنده
 
-حتما به گروه و کانال بپیوندید و از ما حمایت کنید
-
-## Contact Developer
-💎 Group: https://t.me/wizwizdev
-💎 Channel: https://t.me/wizwizch
+💎 GitHub: https://github.com/Erfan-XRay/wizwizxui-timebot
 
 <br>
 <br>
 
-## Stargazers over time
+## 📝 لایسنس
 
-[![Stargazers over time](https://starchart.cc/wizwizdev/wizwizxui-timebot.svg)](https://starchart.cc/wizwizdev/wizwizxui-timebot)
+این پروژه تحت لایسنس MIT منتشر شده است.

@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://github.com/wizwizdev/wizwizxui-timebot" target="_blank" rel="noopener noreferrer">
+  <a href="https://github.com/Erfan-XRay/wizwizxui-timebot" target="_blank" rel="noopener noreferrer">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="https://user-images.githubusercontent.com/27927279/227711552-d2bc1089-5666-477b-9be7-d7e50a5286dc.png">
       <img width="200" height="200" src="https://user-images.githubusercontent.com/27927279/227711552-d2bc1089-5666-477b-9be7-d7e50a5286dc.png">
@@ -15,28 +15,23 @@
 	<a href="./README-fa.md">
 	فارسی
 	</a>
-
 </p>
 
-<h1 align="center"/>Welcome to wizwiz</h1>
+<h1 align="center">WizWiz XUI TimeBot</h1>
 
 <p align="center">
-Easy to sell with <a href="https://github.com/wizwizdev/wizwizxui-timebot">wizwizxui-timebot</a> easy install with few clicks
+Easy to sell with <a href="https://github.com/Erfan-XRay/wizwizxui-timebot">wizwizxui-timebot</a> - easy install with one command
 </p>
 
 <p align="center">
-wizwiz is a powerful and professional robot that supports several types of panels and is the best option for sale, supports most protocols and has easy installation. This robot is optimized for the dear people of Iran. It is a great alternative to selling so that you can get to work.
+WizWiz is a powerful and professional bot designed for managing and selling VPN services. This version exclusively supports the <strong>Sanaei XUI Panel</strong> and is the best option for selling. It supports most protocols and has easy installation.
 </p>
-
 
 <div align=center>
 
-[![Telegram Channel](https://img.shields.io/endpoint?label=Channel&style=flat-square&url=https%3A%2F%2Ftg.sumanjay.workers.dev%2Fwizwizch&color=blue)](https://telegram.dog/wizwizch)
-[![Telegram Group](https://img.shields.io/endpoint?color=neon&label=Support%20Group&style=flat-square&url=https%3A%2F%2Ftg.sumanjay.workers.dev%2Fwizwizdev)](https://telegram.dog/wizwizdev)
-<img src="https://img.shields.io/github/license/wizwizdev/wizwizxui-timebot?style=flat-square" />
-<img src="https://img.shields.io/github/v/release/wizwizdev/wizwizxui-timebot.svg" />
-<!-- <img src="https://visitor-badge.glitch.me/badge?page_id=wizwizdev.wizwizdev" />
- -->
+[![GitHub](https://img.shields.io/github/license/Erfan-XRay/wizwizxui-timebot?style=flat-square)](https://github.com/Erfan-XRay/wizwizxui-timebot)
+[![GitHub release](https://img.shields.io/github/v/release/Erfan-XRay/wizwizxui-timebot.svg)](https://github.com/Erfan-XRay/wizwizxui-timebot/releases)
+
 </div>
 
 <br>
@@ -47,35 +42,57 @@ wizwiz is a powerful and professional robot that supports several types of panel
 <br>
 <br>
 
-# Installation Ubuntu-20.4 
+## 📋 Prerequisites
 
+- Ubuntu 20.04 server or higher
+- Root access
+- Domain with DNS configured
+- **Sanaei XUI** panel installed (latest version)
+- Telegram bot from @BotFather
 
-- If your server does not have root access, please grant root access with "sudo -i" command and then install
+## 🚀 Installation on Ubuntu 20.04
+
+> ⚠️ **Note:** This version only supports **Sanaei XUI** panel
+
+- If your server does not have root access, please grant root access with `sudo -i` command and then install
 - Create a bot in @botfather and /start it
-- The first option asks you for a domain, you must set the ip server for the domain and then enter it according to the example
-> Enter the installation command in the console and enter the required items to complete the installation.
+- Before installation, make sure to set the server IP for the domain
+
+### Automatic Installation:
+
+```bash
+bash <(curl -s https://raw.githubusercontent.com/Erfan-XRay/wizwizxui-timebot/main/install.sh)
 ```
-bash <(curl -s https://raw.githubusercontent.com/wizwizdev/wizwizxui-timebot/main/wizwiz.sh)
+
+or:
+
+```bash
+bash <(curl -s https://raw.githubusercontent.com/Erfan-XRay/wizwizxui-timebot/main/wizwiz.sh)
 ```
-- First enter "sub.domain.com" or "domain.com" without https
-- Enter email
-- Enter y
-- Enter 2
-- Enter username database
-- Enter password database
-- Enter token
-- Enter Numerical ID of admin from @userinfobot
-- Re-enter "sub.domain.com" or "domain.com" without https
-- Very good, the installation message ( ✅ The wizwiz bot has been successfully installed! ) is sent to the bot
+
+### Installation Steps:
+
+1. First enter "sub.domain.com" or "domain.com" without https
+2. Enter email
+3. Enter `y`
+4. Enter `2`
+5. Enter username for database
+6. Enter password for database
+7. Enter bot token
+8. Enter Numerical ID of admin from @userinfobot
+9. Re-enter "sub.domain.com" or "domain.com" without https
+
+✅ Very good, the installation message ( ✅ The wizwiz bot has been successfully installed! ) is sent to the bot
 
 <br>
 <br>
 
-## Update bot - Update panel - backup - remove wizwiz
+## 🔄 Update bot - Update panel - backup - remove wizwiz
 
 - With every update and backup, a notification is sent to the manager robot
-```
-bash <(curl -s https://raw.githubusercontent.com/wizwizdev/wizwizxui-timebot/main/update.sh)
+
+```bash
+bash <(curl -s https://raw.githubusercontent.com/Erfan-XRay/wizwizxui-timebot/main/update.sh)
 ```
 
 <br>
@@ -84,41 +101,23 @@ bash <(curl -s https://raw.githubusercontent.com/wizwizdev/wizwizxui-timebot/mai
 
 <br>
 
+## 🎯 Supported Panel
 
-# Supported Panels
+This version **only** supports **Sanaei XUI** panel:
 
+### Install Sanaei XUI Panel:
 
-- (Marzban)
-````
-sudo bash -c "$(curl -sL https://github.com/Gozargah/Marzban-scripts/raw/master/marzban.sh)" @ install
-````
-- (Niduka Akalanka)
-````
-bash <(curl -Ls https://raw.githubusercontent.com/NidukaAkalanka/x-ui-english/master/install.sh) 0.2.1.2
-````
-- (Sanaei)
-````
+```bash
 bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh) v1.7.9
-````
-- (Alireza)
-````
-bash <(curl -Ls https://raw.githubusercontent.com/alireza0/x-ui/master/install.sh) 1.5.5
-````
-- (Vaxilu)
-````
-bash <(curl -Ls https://raw.githubusercontent.com/vaxilu/x-ui/master/install.sh)
-````
+```
 
-
-
+> ⚠️ **Important:** Please update your Sanaei XUI panel to the latest version to support the new API.
 
 <br>
 <hr>
 <br>
 
-
-
-# Donation
+## 💰 Donation
 
 - Tron (TRX): `TY8j7of18gbMtneB8bbL7SZk5gcntQEemG`
 - Bitcoin: `bc1qcnkjnqvs7kyxvlfrns8t4ely7x85dhvz5gqge4`
@@ -128,7 +127,7 @@ bash <(curl -Ls https://raw.githubusercontent.com/vaxilu/x-ui/master/install.sh)
 <hr>
 <br>
 
-# Features
+## ✨ Features
 
 - nowpayments - zarinpal - nextpay portal and rial currency
 - Support for - xtls - tls - reality - Grpc - ws - tcp
@@ -137,7 +136,7 @@ bash <(curl -Ls https://raw.githubusercontent.com/vaxilu/x-ui/master/install.sh)
 - Display the configuration profile as a sub (in the v2ray software)
 - Representation (individual and mass purchase - configuration management - sales statistics, etc.)
 - Ability to search purchased configurations for easy access (representative)
-- View configuration information on the web
+- View configuration information on the web (modern and responsive UI)
 - Button to register the link to renew and update the config (not purchased from bot)
 - Config QRcode button
 - Delete configuration by user (delete from x-ui panel and database + delete notification)
@@ -185,20 +184,31 @@ bash <(curl -Ls https://raw.githubusercontent.com/vaxilu/x-ui/master/install.sh)
 - Off/on capability (all robot features)
 - Notification of purchase information + renewal etc. in full to the admin robot
 
+<br>
+<hr>
+<br>
+
+## 🔧 Changes in This Version
+
+This version is updated and maintained by **ErfanXRay**:
+
+- ✅ **Sanaei XUI Only:** Removed support for other panels (Marzban, Alireza, Niduka, Vaxilu)
+- ✅ **Simplified Server Addition:** Only 4 steps (name, flag, panel URL, username and password)
+- ✅ **Improved Plan Creation:** Select Inbound from server list instead of manual entry
+- ✅ **New API Support:** Compatible with latest Sanaei XUI version
+- ✅ **Modern UI:** Modern and responsive web interface for user information display
 
 <br>
 <hr>
 <br>
 
-Be sure to join the group and channel and support us
+## 📞 Contact Developer
 
-## Contact Developer
-💎 Group: https://t.me/wizwizdev
-💎 Channel: https://t.me/wizwizch
+💎 GitHub: https://github.com/Erfan-XRay/wizwizxui-timebot
 
 <br>
 <br>
 
-## Stargazers over time
+## 📝 License
 
-[![Stargazers over time](https://starchart.cc/wizwizdev/wizwizxui-timebot.svg)](https://starchart.cc/wizwizdev/wizwizxui-timebot)
+This project is released under the MIT License.
