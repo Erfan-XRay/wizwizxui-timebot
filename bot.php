@@ -6461,13 +6461,6 @@ if(preg_match('/(addNewRahgozarPlan|addNewPlan)/',$userInfo['step']) and $text!=
         
         
         $marzbanList = array_column($info, 0); 
-        if(count($marzbanList) > 0) $condition  = " AND `id` " .($userInfo['step'] == "addNewMarzbanPlan"?"IN":"NOT IN") . " (" . implode(", ", $marzbanList) . ")";
-        else $condition = "";
-
-
-        $stmt = $connection->prepare("SELECT * FROM `server_info` WHERE `active`=1 $condition");
-        $stmt->execute();
-        
         $srvs = $stmt->get_result();
         $stmt->close();
         sendMessage($mainValues['please_wait_message'],$cancelKey);
