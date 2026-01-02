@@ -146,48 +146,67 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
                     if(!$connection->connect_error){
                         $connection->set_charset("utf8mb4");
                         
-                        // Read and execute createDB.php queries
+                        // Execute createDB.php
                         $createDBFile = "../createDB.php";
                         if(file_exists($createDBFile)){
-                            // Read createDB.php and extract SQL queries
-                            $createDBContent = file_get_contents($createDBFile);
-                            
-                            // Execute createDB.php by including it with our connection
-                            // We need to temporarily set the variables
-                            $tempDbUser = $dbUser;
-                            $tempDbPass = $dbPass;
-                            $tempDbName = $dbName;
-                            
-                            // Create a temporary baseInfo.php for createDB.php
-                            $tempBaseInfo = "<?php\n\$dbUserName = '$tempDbUser';\n\$dbPassword = '$tempDbPass';\n\$dbName = '$tempDbName';\n?>";
+                            // Create temporary baseInfo.php for createDB.php
+                            $tempBaseInfo = "<?php\n\$dbUserName = '$dbUser';\n\$dbPassword = '$dbPass';\n\$dbName = '$dbName';\n?>";
                             file_put_contents("../temp_baseInfo.php", $tempBaseInfo);
                             
-                            // Modify createDB.php temporarily to use our connection
-                            $originalCreateDB = file_get_contents($createDBFile);
-                            $modifiedCreateDB = str_replace(
-                                'include "baseInfo.php";',
-                                'include "temp_baseInfo.php";',
-                                $originalCreateDB
-                            );
-                            $modifiedCreateDB = str_replace(
-                                '$connection = new mysqli(\'localhost\',$dbUserName,$dbPassword,$dbName);',
-                                '$connection = new mysqli(\'localhost\',\''.$tempDbUser.'\',\''.$tempDbPass.'\',\''.$tempDbName.'\');',
-                                $modifiedCreateDB
-                            );
+                            // Save original baseInfo if exists
+                            $originalBaseInfoExists = file_exists("../baseInfo.php");
+                            if($originalBaseInfoExists){
+                                rename("../baseInfo.php", "../baseInfo.php.backup");
+                            }
                             
-                            // Write modified version temporarily
-                            file_put_contents("../temp_createDB.php", $modifiedCreateDB);
-                            require_once "../temp_createDB.php";
+                            // Copy temp to baseInfo
+                            copy("../temp_baseInfo.php", "../baseInfo.php");
+                            
+                            // Now include createDB.php
+                            ob_start();
+                            include $createDBFile;
+                            ob_end_clean();
+                            
+                            // Restore original baseInfo if it existed
+                            if($originalBaseInfoExists && file_exists("../baseInfo.php.backup")){
+                                unlink("../baseInfo.php");
+                                rename("../baseInfo.php.backup", "../baseInfo.php");
+                            } else {
+                                // Update baseInfo.php with bot info
+                                $baseInfoContent = "<?php\n";
+                                $baseInfoContent .= "error_reporting(0);\n";
+                                $baseInfoContent .= "\$dbUserName = '$dbUser';\n";
+                                $baseInfoContent .= "\$dbPassword = '$dbPass';\n";
+                                $baseInfoContent .= "\$dbName = '$dbName';\n";
+                                $baseInfoContent .= "\$botToken = '$botToken';\n";
+                                $baseInfoContent .= "\$botUrl = '$botUrl';\n";
+                                $baseInfoContent .= "\$admin = $adminId;\n";
+                                $baseInfoContent .= "?>";
+                                file_put_contents("../baseInfo.php", $baseInfoContent);
+                            }
                             
                             // Clean up
                             @unlink("../temp_baseInfo.php");
-                            @unlink("../temp_createDB.php");
                             
                             // Set webhook
                             if(!empty($botToken) && !empty($botUrl)){
                                 $webhookUrl = rtrim($botUrl, '/') . '/bot.php';
                                 $setWebhookUrl = "https://api.telegram.org/bot{$botToken}/setWebhook?url=" . urlencode($webhookUrl);
                                 @file_get_contents($setWebhookUrl);
+                                
+                                // Send success message
+                                $message = "✅ ربات WizWiz با موفقیت نصب شد!\n\n✨ This version has been modified and maintained by ErfanXRay\n🔗 GitHub: https://github.com/Erfan-XRay/wizwizxui-timebot\n📋 Supports: Sanaei XUI Panel Only";
+                                $sendMessageUrl = "https://api.telegram.org/bot{$botToken}/sendMessage";
+                                $postData = http_build_query([
+                                    'chat_id' => $adminId,
+                                    'text' => $message
+                                ]);
+                                $ch = curl_init($sendMessageUrl);
+                                curl_setopt($ch, CURLOPT_POST, 1);
+                                curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
+                                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                                curl_exec($ch);
+                                curl_close($ch);
                             }
                             
                             $success = true;
