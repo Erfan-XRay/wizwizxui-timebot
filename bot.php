@@ -6452,7 +6452,8 @@ if(preg_match('/(addNewRahgozarPlan|addNewPlan)/',$userInfo['step']) and $text!=
     if($step==3 and $text!=$buttonValues['cancel']){
         $srvkey = [];
 
-        $stmt = $connection->prepare("SELECT `id` FROM `server_config` WHERE `type` = 'marzban'");
+        // Only show Sanaei servers (all active servers)
+        $stmt = $connection->prepare("SELECT * FROM `server_info` WHERE `active`=1");
         $stmt->execute();
         $info = $stmt->get_result()->fetch_all();
         $stmt->close();
@@ -6625,7 +6626,22 @@ if(preg_match('/(addNewRahgozarPlan|addNewPlan)/',$userInfo['step']) and $text!=
         
         sendMessage("لطفا ظرفیت تعداد اکانت روی پورت را وارد کنید:");
     }
-    if($step==64 and $text!=$buttonValues['cancel']){
+    // Step 52: Days entry (after inbound selection) - already defined above
+    if($step==54 and $text!=$buttonValues['cancel']){
+        if(!is_numeric($text)){
+            sendMessage($mainValues['send_only_number']);
+            exit();
+        }
+        
+        // Update volume, network type already set from inbound selection
+        $stmt = $connection->prepare("UPDATE `server_plans` SET `volume`=?, `step`=63 WHERE `active`=0");
+        $stmt->bind_param("d", $text);
+        $stmt->execute();
+        $stmt->close();
+
+        sendMessage("لطفا ظرفیت تعداد اکانت روی پورت را وارد کنید:");
+    }
+    if($step==63 and $text!=$buttonValues['cancel']){
         if(!is_numeric($text)){
             sendMessage($mainValues['send_only_number']);
             exit();
@@ -6647,47 +6663,6 @@ if(preg_match('/(addNewRahgozarPlan|addNewPlan)/',$userInfo['step']) and $text!=
         $stmt->bind_param("s", $text);
         $stmt->execute();
         $stmt->close();
-
-        $msg = '🔻یه توضیح برای پلن مورد نظرت بنویس:';
-        sendMessage($msg,$cancelKey); 
-    }
-    if($step==52 and $text!=$buttonValues['cancel']){
-        if(!is_numeric($text)){
-            sendMessage($mainValues['send_only_number']);
-            exit();
-        }
-        
-        $stmt = $connection->prepare("UPDATE `server_plans` SET `days`=?,`step`=54 WHERE `active`=0");
-        $stmt->bind_param("i", $text);
-        $stmt->execute();
-        $stmt->close();
-
-        sendMessage("🔋 | لطفا مقدار حجم به GB این پلن را وارد کنید:");
-    }
-    if($step==54 and $text!=$buttonValues['cancel']){
-        if(!is_numeric($text)){
-            sendMessage($mainValues['send_only_number']);
-            exit();
-        }
-        
-        // Update volume, network type already set from inbound selection
-        $stmt = $connection->prepare("UPDATE `server_plans` SET `volume`=?, `step`=63 WHERE `active`=0");
-        $stmt->bind_param("d", $text);
-        $stmt->execute();
-        $stmt->close();
-
-        sendMessage("لطفا ظرفیت تعداد اکانت روی پورت را وارد کنید:");
-    }
-    if($step==63 and $text!=$buttonValues['cancel']){
-        if(!is_numeric($text)){
-            sendMessage($mainValues['send_only_number']);
-            exit();
-        }
-        $stmt = $connection->prepare("UPDATE `server_plans` SET `type`=?,`step`=4 WHERE `active`=0");
-        $stmt->bind_param("s", $text);
-        $stmt->execute();
-        $stmt->close();
-
 
         $msg = '🔻یه توضیح برای پلن مورد نظرت بنویس:';
         sendMessage($msg,$cancelKey); 
