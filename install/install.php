@@ -144,8 +144,57 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
                     // Create database tables
                     $connection = new mysqli($dbHost, $dbUser, $dbPass, $dbName);
                     if(!$connection->connect_error){
-                        require_once "../createDB.php";
-                        $success = true;
+                        $connection->set_charset("utf8mb4");
+                        
+                        // Read and execute createDB.php queries
+                        $createDBFile = "../createDB.php";
+                        if(file_exists($createDBFile)){
+                            // Read createDB.php and extract SQL queries
+                            $createDBContent = file_get_contents($createDBFile);
+                            
+                            // Execute createDB.php by including it with our connection
+                            // We need to temporarily set the variables
+                            $tempDbUser = $dbUser;
+                            $tempDbPass = $dbPass;
+                            $tempDbName = $dbName;
+                            
+                            // Create a temporary baseInfo.php for createDB.php
+                            $tempBaseInfo = "<?php\n\$dbUserName = '$tempDbUser';\n\$dbPassword = '$tempDbPass';\n\$dbName = '$tempDbName';\n?>";
+                            file_put_contents("../temp_baseInfo.php", $tempBaseInfo);
+                            
+                            // Modify createDB.php temporarily to use our connection
+                            $originalCreateDB = file_get_contents($createDBFile);
+                            $modifiedCreateDB = str_replace(
+                                'include "baseInfo.php";',
+                                'include "temp_baseInfo.php";',
+                                $originalCreateDB
+                            );
+                            $modifiedCreateDB = str_replace(
+                                '$connection = new mysqli(\'localhost\',$dbUserName,$dbPassword,$dbName);',
+                                '$connection = new mysqli(\'localhost\',\''.$tempDbUser.'\',\''.$tempDbPass.'\',\''.$tempDbName.'\');',
+                                $modifiedCreateDB
+                            );
+                            
+                            // Write modified version temporarily
+                            file_put_contents("../temp_createDB.php", $modifiedCreateDB);
+                            require_once "../temp_createDB.php";
+                            
+                            // Clean up
+                            @unlink("../temp_baseInfo.php");
+                            @unlink("../temp_createDB.php");
+                            
+                            // Set webhook
+                            if(!empty($botToken) && !empty($botUrl)){
+                                $webhookUrl = rtrim($botUrl, '/') . '/bot.php';
+                                $setWebhookUrl = "https://api.telegram.org/bot{$botToken}/setWebhook?url=" . urlencode($webhookUrl);
+                                @file_get_contents($setWebhookUrl);
+                            }
+                            
+                            $success = true;
+                        } else {
+                            $errors[] = "فایل createDB.php یافت نشد!";
+                        }
+                        $connection->close();
                     } else {
                         $errors[] = "خطا در اتصال به دیتابیس: " . $connection->connect_error;
                     }
