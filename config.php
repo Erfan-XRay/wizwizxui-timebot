@@ -5492,9 +5492,8 @@ function getJson($server_id){
     // Try new API first
     $tokenInfo = getXuiToken($server_id);
     if ($tokenInfo->api_version == 'new' && isset($tokenInfo->token->access_token)) {
-        // Use new API
-        if($serverType == "sanaei") $url = "$panel_url/panel/api/inbounds";
-        else $url = "$panel_url/api/inbounds";
+        // Use new API (Sanaei only)
+        $url = "$panel_url/api/inbounds";
         
         $curl = curl_init();
         curl_setopt_array($curl, array(
@@ -5566,8 +5565,8 @@ function getJson($server_id){
         curl_close($curl);
         return $loginResponse;
     }
-    if($serverType == "sanaei") $url = "$panel_url/panel/inbound/list";
-    else $url = "$panel_url/xui/inbound/list";
+    // Sanaei XUI only
+    $url = "$panel_url/panel/inbound/list";
     curl_setopt_array($curl, array(
         CURLOPT_URL => $url,
         CURLOPT_RETURNTRANSFER => true,

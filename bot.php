@@ -1265,24 +1265,13 @@ if(preg_match('/^createAccAmount(\d+)_(\d+)_(\d+)/',$userInfo['step'], $match) &
         }
     
         if($inbound_id == 0){                    
-            if($serverType == "marzban"){
-                $response = addMarzbanUser($server_id, $remark, $volume, $days, $fid);
-                if(!$response->success){
-                    if($response->msg == "User already exists"){
-                        $remark .= rand(1111,99999);
-                        $response = addMarzbanUser($server_id, $remark, $volume, $days, $fid);
-                    }
-                }
-            }
-            else{
+            $response = addUser($server_id, $uniqid, $protocol, $port, $expire_microdate, $remark, $volume, $netType, 'none', $rahgozar, $fid); 
+            
+            if(!$response->success){
+                if(strstr($response->msg, "Duplicate email")) $remark .= RandomString();
+                elseif(strstr($response->msg, "Port already exists")) $port = rand(1111,65000);
+
                 $response = addUser($server_id, $uniqid, $protocol, $port, $expire_microdate, $remark, $volume, $netType, 'none', $rahgozar, $fid); 
-                
-                if(!$response->success){
-                    if(strstr($response->msg, "Duplicate email")) $remark .= RandomString();
-                    elseif(strstr($response->msg, "Port already exists")) $port = rand(1111,65000);
-    
-                    $response = addUser($server_id, $uniqid, $protocol, $port, $expire_microdate, $remark, $volume, $netType, 'none', $rahgozar, $fid); 
-                }
             }
         }else {
             $response = addInboundAccount($server_id, $uniqid, $inbound_id, $expire_microdate, $remark, $volume, $limitip, null, $fid); 
@@ -1307,22 +1296,15 @@ if(preg_match('/^createAccAmount(\d+)_(\d+)_(\d+)/',$userInfo['step'], $match) &
             break;
         }
     
-        if($serverType == "marzban"){
-            $uniqid = $token = str_replace("/sub/", "", $response->sub_link);
-            $subLink = $botState['subLinkState'] == "on"?$panelUrl . $response->sub_link:"";
-            $vraylink = [$subLink];
-            $vray_link = json_encode($response->vray_links);
-        }
-        else{
-            $token = RandomString(30);
-            $vraylink = getConnectionLink($server_id, $uniqid, $protocol, $remark, $port, $netType, $inbound_id, $rahgozar, $customPath, $customPort, $customSni);
-            $subLink = $botState['subLinkState']=="on"?$botUrl . "settings/subLink.php?token=" . $token:"";
-            $vray_link = json_encode($vraylink);
-        }
+        // Sanaei XUI - generate connection links
+        $token = RandomString(30);
+        $vraylink = getConnectionLink($server_id, $uniqid, $protocol, $remark, $port, $netType, $inbound_id, $rahgozar, $customPath, $customPort, $customSni);
+        $subLink = $botState['subLinkState']=="on"?$botUrl . "settings/subLink.php?token=" . $token:"";
+        $vray_link = json_encode($vraylink);
         foreach($vraylink as $link){
             $acc_text = "
     
-        🔮 $remark \n " . ($botState['configLinkState'] != "off" && $serverType != "marzban"?"<code>$link</code>":"");
+        🔮 $remark \n " . ($botState['configLinkState'] != "off"?"<code>$link</code>":"");
             if($botState['subLinkState'] == "on") $acc_text .= 
             " \n🌐 subscription : <code>$subLink</code>";
         
@@ -1723,23 +1705,13 @@ if(preg_match('/havePaiedWeSwap(.*)/',$data,$match)) {
         }
         
         if($inbound_id == 0){    
-            if($serverType == "marzban"){
-                $response = addMarzbanUser($server_id, $remark, $volume, $days, $fid);
-                if(!$response->success){
-                    if($response->msg == "User already exists"){
-                        $remark .= rand(1111,99999);
-                        $response = addMarzbanUser($server_id, $remark, $volume, $days, $fid);
-                    }
-                }
-            }else{
-                $response = addUser($server_id, $uniqid, $protocol, $port, $expire_microdate, $remark, $volume, $netType, 'none', $rahgozar, $fid); 
-                if(!$response->success){
-                    if(strstr($response->msg, "Duplicate email")) $remark .= RandomString();
-                    elseif(strstr($response->msg, "Port already exists")) $port = rand(1111,65000);
-                    
-                    $response = addUser($server_id, $uniqid, $protocol, $port, $expire_microdate, $remark, $volume, $netType, 'none', $rahgozar, $fid);
-                } 
-            }
+            $response = addUser($server_id, $uniqid, $protocol, $port, $expire_microdate, $remark, $volume, $netType, 'none', $rahgozar, $fid); 
+            if(!$response->success){
+                if(strstr($response->msg, "Duplicate email")) $remark .= RandomString();
+                elseif(strstr($response->msg, "Port already exists")) $port = rand(1111,65000);
+                
+                $response = addUser($server_id, $uniqid, $protocol, $port, $expire_microdate, $remark, $volume, $netType, 'none', $rahgozar, $fid);
+            } 
         }else {
             $response = addInboundAccount($server_id, $uniqid, $inbound_id, $expire_microdate, $remark, $volume, $limitip, null, $fid); 
             if(!$response->success){
@@ -1763,18 +1735,12 @@ if(preg_match('/havePaiedWeSwap(.*)/',$data,$match)) {
             exit;
         }
         
-        if($serverType == "marzban"){
-            $uniqid = $token = str_replace("/sub/", "", $response->sub_link);
-            $subLink = $botState['subLinkState'] == "on"?$panelUrl . $response->sub_link:"";
-            $vraylink = [$subLink];
-            $vray_link = json_encode($response->vray_links);
-        }else{
-            $token = RandomString(30);
-            $subLink = $botState['subLinkState']=="on"?$botUrl . "settings/subLink.php?token=" . $token:"";
-    
-            $vraylink = getConnectionLink($server_id, $uniqid, $protocol, $remark, $port, $netType, $inbound_id, $rahgozar, $customPath, $customPort, $customSni);
-            $vray_link = json_encode($vraylink);
-        }
+        // Sanaei XUI - generate connection links
+        $token = RandomString(30);
+        $subLink = $botState['subLinkState']=="on"?$botUrl . "settings/subLink.php?token=" . $token:"";
+
+        $vraylink = getConnectionLink($server_id, $uniqid, $protocol, $remark, $port, $netType, $inbound_id, $rahgozar, $customPath, $customPort, $customSni);
+        $vray_link = json_encode($vraylink);
         foreach($vraylink as $link){
         $acc_text = "
         
@@ -1783,7 +1749,7 @@ if(preg_match('/havePaiedWeSwap(.*)/',$data,$match)) {
 🔮 نام سرویس: $remark
 🔋حجم سرویس: $volume گیگ
 ⏰ مدت سرویس: $days روز⁮⁮ ⁮⁮
-" . ($botState['configLinkState'] != "off" && $serverType != "marzban"?"
+" . ($botState['configLinkState'] != "off"?"
 💝 config : <code>$link</code>":"");
 
 if($botState['subLinkState'] == "on") $acc_text .= "
@@ -3037,7 +3003,7 @@ if(preg_match('/payCustomWithWallet(.*)/',$data, $match)){
 🔮 نام سرویس: $remark
 🔋حجم سرویس: $volume گیگ
 ⏰ مدت سرویس: $days روز⁮⁮ ⁮⁮
-" . ($botState['configLinkState'] != "off" && $serverType != "marzban"?"
+" . ($botState['configLinkState'] != "off"?"
 💝 config : <code>$link</code>":"");
 if($botState['subLinkState'] == "on") $acc_text .= "
 
@@ -3446,7 +3412,7 @@ if(preg_match('/accCustom(.*)/',$data, $match) and $text != $buttonValues['cance
 🔮 نام سرویس: $remark
 🔋حجم سرویس: $volume گیگ
 ⏰ مدت سرویس: $days روز⁮⁮ ⁮⁮
-" . ($botState['configLinkState'] != "off" && $serverType != "marzban"?"
+" . ($botState['configLinkState'] != "off"?"
 💝 config : <code>$vray_link</code>":"");
 if($botState['subLinkState'] == "on") $acc_text .= "
 
@@ -3771,7 +3737,7 @@ if(preg_match('/payWithWallet(.*)/',$data, $match)){
 🔮 نام سرویس: $remark
 🔋حجم سرویس: $volume گیگ
 ⏰ مدت سرویس: $days روز⁮⁮ ⁮⁮
-" . ($botState['configLinkState'] != "off" && $serverType != "marzban"?"
+" . ($botState['configLinkState'] != "off"?"
 💝 config : <code>$link</code>":"");
 if($botState['subLinkState'] == "on") $acc_text .= "
 
@@ -4302,7 +4268,7 @@ if(preg_match('/accept(.*)/',$data, $match) and $text != $buttonValues['cancel']
 🔮 نام سرویس: $remark
 🔋حجم سرویس: $volume گیگ
 ⏰ مدت سرویس: $days روز
-" . ($botState['configLinkState'] != "off" && $serverType != "marzban"?"
+" . ($botState['configLinkState'] != "off"?"
 💝 config : <code>$link</code>":"");
 if($botState['subLinkState'] == "on") $acc_text .= "
 
@@ -5768,7 +5734,7 @@ if(preg_match('/freeTrial(\d+)_(?<buyType>\w+)/',$data,$match)) {
 🔮 نام سرویس: $remark
 🔋حجم سرویس: $volume گیگ
 ⏰ مدت سرویس: $days روز
-" . ($botState['configLinkState'] != "off" && $serverType != "marzban"?"
+" . ($botState['configLinkState'] != "off"?"
 💝 config : <code>$link</code>":"");
 if($botState['subLinkState'] == "on") $acc_text .= "
 
@@ -6422,12 +6388,13 @@ if(preg_match('/sConfigUpdate(\d+)/', $data,$match)){
     }
 }
 
-if (($data == 'addNewPlan' || $data=="addNewRahgozarPlan" || $data == "addNewMarzbanPlan") and (($from_id == $admin || $userInfo['isAdmin'] == true))){
+if (($data == 'addNewPlan' || $data=="addNewRahgozarPlan") and (($from_id == $admin || $userInfo['isAdmin'] == true))){
     setUser($data);
     $stmt = $connection->prepare("DELETE FROM `server_plans` WHERE `active`=0");
     $stmt->execute();
     $stmt->close();
-    if($data=="addNewPlan" || $data == "addNewMarzbanPlan"){
+    
+    if($data=="addNewPlan"){
         $sql = "INSERT INTO `server_plans` (`fileid`, `catid`, `server_id`, `inbound_id`, `acount`, `limitip`, `title`, `protocol`, `days`, `volume`, `type`, `price`, `descr`, `pic`, `active`, `step`, `date`)
                                             VALUES ('', 0,0,0,0, 1, '', '', 0, 0, '', 0, '', '',0,1, ?);";
     }elseif($data=="addNewRahgozarPlan"){
@@ -6443,7 +6410,7 @@ if (($data == 'addNewPlan' || $data=="addNewRahgozarPlan" || $data == "addNewMar
     sendMessage($msg,$cancelKey);
     exit;
 }
-if(preg_match('/(addNewRahgozarPlan|addNewPlan|addNewMarzbanPlan)/',$userInfo['step']) and $text!=$buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)){
+if(preg_match('/(addNewRahgozarPlan|addNewPlan)/',$userInfo['step']) and $text!=$buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)){
     $catkey = [];
     $stmt = $connection->prepare("SELECT * FROM `server_categories` WHERE `parent` =0 and `active`=1");
     $stmt->execute();
@@ -6531,114 +6498,82 @@ if(preg_match('/(addNewRahgozarPlan|addNewPlan|addNewMarzbanPlan)/',$userInfo['s
             sendMessage($msg,$catkey);
         }
     } 
-    if($step==50 and $text!=$buttonValues['cancel'] and preg_match('/selectNewPlanServer(\d+)/', $data,$match)){
-        $newStep = $userInfo['step'] == "addNewMarzbanPlan"?53:51;
+    if($step==50 and preg_match('/selectNewPlanServer(\d+)/', $data,$match)){
+        $server_id = $match[1];
         
-        $stmt = $connection->prepare("UPDATE `server_plans` SET `server_id`=?,`step`=? WHERE `active`=0");
-        $stmt->bind_param("ii", $match[1], $newStep);
+        // Get server info
+        $stmt = $connection->prepare("SELECT * FROM `server_config` WHERE `id`=?");
+        $stmt->bind_param("i", $server_id);
         $stmt->execute();
+        $server_info = $stmt->get_result()->fetch_assoc();
         $stmt->close();
-
-        $keys = json_encode(['inline_keyboard'=>[
-            [['text'=>"🎖پورت اختصاصی",'callback_data'=>"withSpecificPort"]],
-            [['text'=>"🎗پورت اشتراکی",'callback_data'=>"withSharedPort"]]
-            ]]);
-        if($userInfo['step'] != "addNewMarzbanPlan") editText($message_id, "لطفا نوعیت پورت پنل رو انتخاب کنید", $keys);
-        else editText($message_id, "📅 | لطفا تعداد روز های اعتبار این پلن را وارد کنید:");
-    }
-    if($step==51 and $text!=$buttonValues['cancel'] and preg_match('/^with(Specific|Shared)Port/',$data,$match)){
-        if($userInfo['step'] == "addNewRahgozarPlan") $msg =  "📡 | لطفا پروتکل پلن مورد نظر را وارد کنید (vless | vmess)";
-        else $msg =  "📡 | لطفا پروتکل پلن مورد نظر را وارد کنید (vless | vmess | trojan)";
-        editText($message_id,$msg);
-        if($match[1] == "Shared"){
-            $stmt = $connection->prepare("UPDATE `server_plans` SET `step`=60 WHERE `active`=0");
-            $stmt->execute();
-            $stmt->close();
-        }
-        elseif($match[1] == "Specific"){
-            $stmt = $connection->prepare("UPDATE server_plans SET step=52 WHERE active=0");
-            $stmt->execute();
-            $stmt->close();
-        }
-    }
-    if($step==60 and $text!=$buttonValues['cancel']){
-        if($text != "vless" && $text != "vmess" && $text != "trojan" && $userInfo['step'] == "addNewPlan"){
-            sendMessage("لطفا فقط پروتکل های vless و vmess را وارد کنید",$cancelKey);
-            exit();
-        }
-        elseif($text != "vless" && $text != "vmess" && $userInfo['step'] == "addNewRahgozarPlan"){
-            sendMessage("لطفا فقط پروتکل های vless و vmess را وارد کنید",$cancelKey);
+        
+        if(!$server_info){
+            sendMessage("❌ سرور یافت نشد!",$cancelKey);
             exit();
         }
         
-        $stmt = $connection->prepare("UPDATE `server_plans` SET `protocol`=?,`step`=61 WHERE `active`=0");
-        $stmt->bind_param("s", $text);
-        $stmt->execute();
-        $stmt->close();
-        sendMessage("📅 | لطفا تعداد روز های اعتبار این پلن را وارد کنید:");
-    }
-    if($step==61 and $text!=$buttonValues['cancel']){
-        if(!is_numeric($text)){
-            sendMessage($mainValues['send_only_number']);
-            exit();
-        }
+        sendMessage("⏳ در حال دریافت لیست Inbound های سرور...",$cancelKey);
         
-        $stmt = $connection->prepare("UPDATE `server_plans` SET `days`=?,`step`=62 WHERE `active`=0");
-        $stmt->bind_param("i", $text);
-        $stmt->execute();
-        $stmt->close();
-
-        sendMessage("🔋 | لطفا مقدار حجم به GB این پلن را وارد کنید:");
-    }
-    if($step==62 and $text!=$buttonValues['cancel']){
-        if(!is_numeric($text)){
-            sendMessage($mainValues['send_only_number']);
-            exit();
-        }
-        
-        $stmt = $connection->prepare("UPDATE `server_plans` SET `volume`=?,`step`=63 WHERE `active`=0");
-        $stmt->bind_param("d", $text);
-        $stmt->execute();
-        $stmt->close();
-        sendMessage("🛡 | لطفا آیدی سطر کانکشن در پنل را وارد کنید:");
-    }
-    if($step==63 and $text!=$buttonValues['cancel']){
-        if(!is_numeric($text)){
-            sendMessage($mainValues['send_only_number']);
-            exit();
-        }
-        
-        $stmt = $connection->prepare("SELECT * FROM `server_plans` WHERE `active` = 0");
-        $stmt->execute();
-        $res = $stmt->get_result()->fetch_assoc();
-        $stmt->close();
-
-        
-        $jsonResponse = getJson($res['server_id']);
+        // Get inbounds from panel
+        $jsonResponse = getJson($server_id);
         if(!$jsonResponse || !isset($jsonResponse->success) || !$jsonResponse->success){
-            sendMessage("❌ خطا در ارتباط با پنل. لطفا دوباره تلاش کنید.");
+            sendMessage("❌ خطا در دریافت اطلاعات از پنل. لطفا دوباره تلاش کنید.",$cancelKey);
             exit();
         }
         
         $response = $jsonResponse->obj;
-        $netType = null;
+        $inboundKeys = [];
         
-        // Convert text to both string and int for comparison (API might return id as string or int)
-        $textAsInt = intval($text);
-        $textAsString = strval($text);
+        if(is_array($response) && count($response) > 0){
+            foreach($response as $row){
+                $inboundId = is_object($row) ? $row->id : (isset($row['id']) ? $row['id'] : null);
+                $remark = is_object($row) ? $row->remark : (isset($row['remark']) ? $row['remark'] : 'بدون نام');
+                $protocol = is_object($row) ? $row->protocol : (isset($row['protocol']) ? $row['protocol'] : 'unknown');
+                $port = is_object($row) ? $row->port : (isset($row['port']) ? $row['port'] : 'N/A');
+                
+                $inboundKeys[] = [['text' => "🔹 $remark (ID: $inboundId) - $protocol:$port", 'callback_data' => "selectInboundForPlan_$server_id" . "_" . $inboundId]];
+            }
+            
+            if(count($inboundKeys) == 0){
+                sendMessage("❌ هیچ Inbound در این سرور یافت نشد. لطفا ابتدا در پنل Inbound ایجاد کنید.",$cancelKey);
+                exit();
+            }
+            
+            $inboundKeys = array_chunk($inboundKeys, 1);
+            $inboundKeys[] = [['text' => $buttonValues['cancel'], 'callback_data' => 'cancel']];
+            
+            editText($message_id, "📋 لطفا Inbound مورد نظر را انتخاب کنید:", json_encode(['inline_keyboard' => $inboundKeys]));
+            
+        } else {
+            sendMessage("❌ هیچ Inbound در این سرور یافت نشد. لطفا ابتدا در پنل Inbound ایجاد کنید.",$cancelKey);
+            exit();
+        }
+    }
+    if(preg_match('/^selectInboundForPlan_(\d+)_(\d+)/', $data, $match)){
+        $server_id = $match[1];
+        $inbound_id = $match[2];
+        
+        // Get inbound details
+        $jsonResponse = getJson($server_id);
+        if(!$jsonResponse || !isset($jsonResponse->success) || !$jsonResponse->success){
+            sendMessage("❌ خطا در دریافت اطلاعات از پنل.",$cancelKey);
+            exit();
+        }
+        
+        $response = $jsonResponse->obj;
+        $protocol = null;
+        $netType = null;
         
         if(is_array($response)){
             foreach($response as $row){
-                // Handle both object and array structures
                 $rowId = is_object($row) ? $row->id : (isset($row['id']) ? $row['id'] : null);
                 
-                // Compare with both string and int versions
-                if($rowId == $textAsInt || $rowId == $textAsString || strval($rowId) == $textAsString){
-                    if(is_object($row)){
-                        $streamSettings = is_string($row->streamSettings) ? json_decode($row->streamSettings) : $row->streamSettings;
-                    } else {
-                        $streamSettings = is_string($row['streamSettings']) ? json_decode($row['streamSettings']) : $row['streamSettings'];
-                    }
+                if($rowId == $inbound_id || strval($rowId) == strval($inbound_id)){
+                    $protocol = is_object($row) ? $row->protocol : (isset($row['protocol']) ? $row['protocol'] : null);
+                    $streamSettings = is_object($row) ? 
+                        (is_string($row->streamSettings) ? json_decode($row->streamSettings) : $row->streamSettings) :
+                        (is_string($row['streamSettings']) ? json_decode($row['streamSettings']) : $row['streamSettings']);
                     
                     if(is_object($streamSettings) && isset($streamSettings->network)){
                         $netType = $streamSettings->network;
@@ -6650,17 +6585,45 @@ if(preg_match('/(addNewRahgozarPlan|addNewPlan|addNewMarzbanPlan)/',$userInfo['s
             }
         }
         
-        if(is_null($netType)){
-            sendMessage("❌ کانفیگی با این سطر آیدی یافت نشد. لطفا آیدی را دوباره بررسی کنید.");
+        if(!$protocol){
+            sendMessage("❌ Inbound انتخاب شده یافت نشد!",$cancelKey);
             exit();
         }
         
-        $stmt = $connection->prepare("UPDATE `server_plans` SET `type` = ?, `inbound_id`=?,`step`=64 WHERE `active`=0");
-        $stmt->bind_param("si", $netType, $text);
+        // Update plan with server_id and inbound_id
+        $stmt = $connection->prepare("UPDATE `server_plans` SET `server_id`=?, `inbound_id`=?, `protocol`=?, `type`=?, `step`=52 WHERE `active`=0");
+        $stmt->bind_param("iisss", $server_id, $inbound_id, $protocol, $netType);
+        $stmt->execute();
+        $stmt->close();
+        
+        editText($message_id, "✅ Inbound انتخاب شد!\n\n📅 تعداد روزهای اعتبار پلن را وارد کنید:", $cancelKey);
+    }
+    // Step 52: Days entry (after inbound selection)
+    if($step==52 and $text!=$buttonValues['cancel']){
+        if(!is_numeric($text)){
+            sendMessage($mainValues['send_only_number']);
+            exit();
+        }
+        
+        $stmt = $connection->prepare("UPDATE `server_plans` SET `days`=?,`step`=53 WHERE `active`=0");
+        $stmt->bind_param("i", $text);
         $stmt->execute();
         $stmt->close();
 
-        sendMessage("لطفا ظرفیت تعداد اکانت رو پورت مورد نظر را وارد کنید");
+        sendMessage("🔋 | لطفا مقدار حجم به GB این پلن را وارد کنید:");
+    }
+    if($step==53 and $text!=$buttonValues['cancel']){
+        if(!is_numeric($text)){
+            sendMessage($mainValues['send_only_number']);
+            exit();
+        }
+        
+        $stmt = $connection->prepare("UPDATE `server_plans` SET `volume`=?,`step`=63 WHERE `active`=0");
+        $stmt->bind_param("d", $text);
+        $stmt->execute();
+        $stmt->close();
+        
+        sendMessage("لطفا ظرفیت تعداد اکانت روی پورت را وارد کنید:");
     }
     if($step==64 and $text!=$buttonValues['cancel']){
         if(!is_numeric($text)){
@@ -6668,14 +6631,14 @@ if(preg_match('/(addNewRahgozarPlan|addNewPlan|addNewMarzbanPlan)/',$userInfo['s
             exit();
         }
         
-        $stmt = $connection->prepare("UPDATE `server_plans` SET `acount`=?,`step`=65 WHERE `active`=0");
+        $stmt = $connection->prepare("UPDATE `server_plans` SET `acount`=?,`step`=64 WHERE `active`=0");
         $stmt->bind_param("i", $text);
         $stmt->execute();
         $stmt->close();
 
         sendMessage("🧲 | لطفا تعداد چند کاربره این پلن را وارد کنید ( 0 نامحدود است )");
     }
-    if($step==65 and $text!=$buttonValues['cancel']){
+    if($step==64 and $text!=$buttonValues['cancel']){
         if(!is_numeric($text)){
             sendMessage($mainValues['send_only_number']);
             exit();
@@ -6689,22 +6652,6 @@ if(preg_match('/(addNewRahgozarPlan|addNewPlan|addNewMarzbanPlan)/',$userInfo['s
         sendMessage($msg,$cancelKey); 
     }
     if($step==52 and $text!=$buttonValues['cancel']){
-        if($userInfo['step'] == "addNewPlan" && $text != "vless" && $text != "vmess" && $text != "trojan"){
-            sendMessage("لطفا فقط پروتکل های vless و vmess را وارد کنید",$cancelKey);
-            exit();
-        }elseif($userInfo['step'] == "addNewRahgozarPlan" && $text != "vless" && $text != "vmess"){
-            sendMessage("لطفا فقط پروتکل های vless و vmess را وارد کنید",$cancelKey);
-            exit();
-        }
-        
-        $stmt = $connection->prepare("UPDATE `server_plans` SET `protocol`=?,`step`=53 WHERE `active`=0");
-        $stmt->bind_param("s", $text);
-        $stmt->execute();
-        $stmt->close();
-
-        sendMessage("📅 | لطفا تعداد روز های اعتبار این پلن را وارد کنید:");
-    }
-    if($step==53 and $text!=$buttonValues['cancel']){
         if(!is_numeric($text)){
             sendMessage($mainValues['send_only_number']);
             exit();
@@ -6723,23 +6670,17 @@ if(preg_match('/(addNewRahgozarPlan|addNewPlan|addNewMarzbanPlan)/',$userInfo['s
             exit();
         }
         
-        if($userInfo['step'] == "addNewPlan"){
-            $sql = ("UPDATE `server_plans` SET `volume`=?,`step`=55 WHERE `active`=0");
-            $msg = "🔉 | لطفا نوع شبکه این پلن را در انتخاب کنید  (ws | tcp | grpc) :";
-        }elseif($userInfo['step'] == "addNewRahgozarPlan" || $userInfo['step'] == "addNewMarzbanPlan"){
-            $sql = ("UPDATE `server_plans` SET `volume`=?, `type`='ws', `step`=4 WHERE `active`=0");
-            $msg = '🔻یه توضیح برای پلن مورد نظرت بنویس:';
-        }
-        $stmt = $connection->prepare($sql);
+        // Update volume, network type already set from inbound selection
+        $stmt = $connection->prepare("UPDATE `server_plans` SET `volume`=?, `step`=63 WHERE `active`=0");
         $stmt->bind_param("d", $text);
         $stmt->execute();
         $stmt->close();
 
-        sendMessage($msg);
+        sendMessage("لطفا ظرفیت تعداد اکانت روی پورت را وارد کنید:");
     }
-    if($step==55 and $text!=$buttonValues['cancel']){
-        if($text != "tcp" && $text != "ws" && $text != "grpc"){
-            sendMessage("لطفا فقط نوع (ws | tcp | grpc) را وارد کنید");
+    if($step==63 and $text!=$buttonValues['cancel']){
+        if(!is_numeric($text)){
+            sendMessage($mainValues['send_only_number']);
             exit();
         }
         $stmt = $connection->prepare("UPDATE `server_plans` SET `type`=?,`step`=4 WHERE `active`=0");
@@ -6753,84 +6694,16 @@ if(preg_match('/(addNewRahgozarPlan|addNewPlan|addNewMarzbanPlan)/',$userInfo['s
     }
     
     if($step==4 and $text!=$buttonValues['cancel']){
-        
-        if($userInfo['step'] == "addNewMarzbanPlan"){
-            $stmt = $connection->prepare("SELECT * FROM `server_plans` WHERE `active` = 0 AND `step` = 4");
-            $stmt->execute();
-            $serverId = $stmt->get_result()->fetch_assoc()['server_id'];
-            $stmt->close();
-        
-            $hosts = getMarzbanHosts($serverId)->inbounds;
-            $networkType = array();
-            foreach($hosts as $key => $inbound){
-                $networkType[] = [['text'=>$inbound->tag, 'callback_data'=>"planNetworkType{$inbound->protocol}*_*{$inbound->tag}"]];
-            }
-            $networkType = json_encode(['inline_keyboard'=>$networkType]);
-
-            $stmt = $connection->prepare("UPDATE `server_plans` SET `descr`=?, `step` = 5 WHERE `step` = 4");
-            sendMessage("لطفا نوع شبکه های این پلن را انتخاب کنید",$networkType);
-        }
-        else{
-            $stmt = $connection->prepare("UPDATE `server_plans` SET `descr`=?, `active`=1,`step`=10 WHERE `step`=4");
-            $imgtxt = '☑️ | پنل با موفقیت ثبت و ایجاد شد ( لذت ببرید ) ';
-            
-            sendMessage($imgtxt,$removeKeyboard);
-            sendMessage($mainValues['reached_main_menu'],getAdminKeys());
-            setUser();
-        }
+        $stmt = $connection->prepare("UPDATE `server_plans` SET `descr`=?, `active`=1,`step`=10 WHERE `step`=4");
         $stmt->bind_param("s", $text);
         $stmt->execute();
         $stmt->close();
-
-    } 
-    elseif($step == 5 and $text != $buttonValues['cancel'] && preg_match('/^planNetworkType(?<protocol>.+)\*_\*(?<tag>.*)/',$data,$match)){
-        $saveBtn = "ذخیره ✅";
-        if($markup[count($markup)-1][0]['text'] == $saveBtn) unset($markup[count($markup)-1]);
-
-        foreach($markup as $key => $keyboard){
-            if($keyboard[0]['callback_data'] == $data) $markup[$key][0]['text'] = $keyboard['0']['text'] == $match['tag'] . " ✅" ? $match['tag']:$match['tag'] . " ✅";
-        }
-
-        if(strstr(json_encode($markup,JSON_UNESCAPED_UNICODE), "✅") && !strstr(json_encode($markup,JSON_UNESCAPED_UNICODE), $saveBtn)){
-            $markup[] = [['text'=>$saveBtn,'callback_data'=>"savePlanNetworkType"]];
-        }
-        $markup = json_encode(['inline_keyboard'=>array_values($markup)]);
         
-        editKeys($markup);
-    }
-    elseif($step == 5 && $text != $buttonValues['cancel'] && $data == "savePlanNetworkType"){
-        delMessage();
-        $inbounds = array();
-        $proxies = array();
-        unset($markup[count($markup)-1]);
-
-        foreach($markup as $key=>$value){
-            $tag = trim(str_replace("✅", "", $value[0]['text'], $state));
-            if($state > 0){
-                preg_match('/^planNetworkType(?<protocol>.+)\*_\*(?<tag>.*)/',$value[0]['callback_data'],$info);
-                $inbounds[$info['protocol']][] = $tag;
-                $proxies[$info['protocol']] = array();
-    
-                if($info['protocol'] == "vless"){
-                    $proxies["vless"] = ["flow" => ""];
-                }
-                elseif($info['protocol'] == "shadowsocks"){
-                    $proxies["shadowsocks"] = ['method' => "chacha20-ietf-poly1305"];
-                }
-            }
-        }
-        
-        $info = json_encode(['inbounds'=>$inbounds, 'proxies'=>$proxies]);
-        $stmt = $connection->prepare("UPDATE `server_plans` SET `custom_sni`=?, `active`=1,`step`=10 WHERE `step`=5");
-        $stmt->bind_param("s", $info);
-        $stmt->execute();
-        $stmt->close();
-        
-        $imgtxt = '☑️ | پنل با موفقیت ثبت و ایجاد شد ( لذت ببرید ) ';
+        $imgtxt = '☑️ | پلن با موفقیت ثبت و ایجاد شد ( لذت ببرید ) ';
         sendMessage($imgtxt,$removeKeyboard);
         sendMessage($mainValues['reached_main_menu'],getAdminKeys());
         setUser();
-    }
+    // Marzban plan creation steps removed - only Sanaei supported
 }
 if($data == 'backplan' and ($from_id == $admin || $userInfo['isAdmin'] == true)){
     $stmt = $connection->prepare("SELECT * FROM `server_info` WHERE `active`=1");
@@ -6849,7 +6722,6 @@ if($data == 'backplan' and ($from_id == $admin || $userInfo['isAdmin'] == true))
     $keyboard[] = [['text'=>'➕ افزودن پلن اختصاصی و اشتراکی','callback_data'=>"addNewPlan"]];
     $keyboard[] = [
         ['text'=>'➕ افزودن پلن رهگذر','callback_data'=>"addNewRahgozarPlan"],
-        ['text'=>"افزودن پلن مرزبان",'callback_data'=>"addNewMarzbanPlan"]
                     ];
     $keyboard[] = [['text'=>'➕ افزودن پلن حجمی','callback_data'=>"volumePlanSettings"],['text'=>'➕ افزودن پلن زمانی','callback_data'=>"dayPlanSettings"]];
     $keyboard[] = [['text' => "➕ افزودن پلن دلخواه", 'callback_data' => "editCustomPlan"]];
@@ -8352,7 +8224,8 @@ if(preg_match('/switchServer(.+)_(.+)/',$data,$match)){
             $up = $remove_response['up'];
             $down = $remove_response['down'];
 			$id_label = $protocol == 'trojan' ? 'password' : 'id';
-			if($serverType == "sanaei" || $serverType == "alireza"){
+			// Sanaei XUI only
+			if(true){
 			    if($reality == "true"){
                     $newArr = [
                       "$id_label" => $uniqid,
@@ -9604,314 +9477,110 @@ if(preg_match('/^changeRealityState(\d+)/',$data,$match) && ($from_id == $admin 
     
     exit();
 }
-if(preg_match('/^changeServerType(\d+)/',$data,$match) && ($from_id == $admin || $userInfo['isAdmin'] == true)){
-    editText($message_id,"
-    
-🔰 نکته مهم: ( پنل x-ui خود را به آخرین نسخه آپدیت کنید ) 
-
-❤️ اگر از پنل سنایی استفاده میکنید لطفا نوع پنل را ( سنایی ) انتخاب کنید
-🧡 اگر از پنل علیرضا استفاده میکنید لطفا نوع پنل را ( علیرضا ) انتخاب کنید
-💚 اگر از پنل نیدوکا استفاده میکنید لطفا نوع پنل را ( ساده ) انتخاب کنید 
-💙 اگر از پنل چینی استفاده میکنید لطفا نوع پنل را ( ساده ) انتخاب کنید 
-⁮⁮ ⁮⁮ ⁮⁮ ⁮⁮
-📣 حتما نوع پنل را انتخاب کنید وگرنه براتون مشکل ساز میشه !
-⁮⁮ ⁮⁮ ⁮⁮ ⁮⁮
-",json_encode(['inline_keyboard'=>[
-        [['text'=>"ساده",'callback_data'=>"chhangeServerTypenormal_" . $match[1]],['text'=>"سنایی",'callback_data'=>"chhangeServerTypesanaei_" . $match[1]]],
-        [['text'=>"علیرضا",'callback_data'=>"chhangeServerTypealireza_" . $match[1]]]
-        ]]));
-    exit();
-}
-if(preg_match('/^chhangeServerType(\w+)_(\d+)/',$data,$match) && ($from_id == $admin || $userInfo['isAdmin'] == true)){
-    alert($mainValues['saved_successfuly']);
-    $stmt = $connection->prepare("UPDATE `server_config` SET `type` = ? WHERE `id`=?");
-    $stmt->bind_param("si",$match[1], $match[2]);
-    $stmt->execute();
-    $stmt->close();
-    
-    $keys = getServerConfigKeys($match[2]);
-    editText($message_id, "☑️ مدیریت سرور ها: $cname",$keys);
-}
-if(($data == "addNewMarzbanPanel" || $data=='addNewServer') and ($from_id == $admin || $userInfo['isAdmin'] == true)){
+// Panel type selection removed - only Sanaei supported
+if($data=='addNewServer' and ($from_id == $admin || $userInfo['isAdmin'] == true)){
     delMessage();
-    setUser($data, 'temp');
     setUser('addserverName');
-    sendMessage("مرحله اول: 
-▪️یه اسم برا سرورت انتخاب کن:",$cancelKey);
+    sendMessage("مرحله 1 از 4: 
+▪️ نام سرور را وارد کنید:",$cancelKey);
     exit();
 }
 if($userInfo['step'] == 'addserverName' and $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
-	sendMessage('مرحله دوم: 
-▪️ظرفیت تعداد ساخت کانفیگ رو برای سرورت مشخص کن ( عدد باشه )');
     $data = array();
     $data['title'] = $text;
-
-    setUser('addServerUCount' . json_encode($data,JSON_UNESCAPED_UNICODE));
-    exit();
-}
-if(preg_match('/^addServerUCount(.*)/',$userInfo['step'],$match) and $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
-    $data = json_decode($match[1],true);
-    $data['ucount'] = $text;
-
-    sendMessage("مرحله سوم: 
-▪️یه اسم ( ریمارک ) برا کانفیگ انتخاب کن:
- ( به صورت انگیلیسی و بدون فاصله )
-");
-    setUser('addServerRemark' . json_encode($data,JSON_UNESCAPED_UNICODE));
-    exit();
-}
-if(preg_match('/^addServerRemark(.*)/',$userInfo['step'], $match) and $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
-    $data = json_decode($match[1], true);
-    $data['remark'] = $text;
-
-    sendMessage("مرحله چهارم:
-▪️لطفا یه ( ایموجی پرچم 🇮🇷 ) برا سرورت انتخاب کن:");
+    sendMessage('مرحله 2 از 4:
+▪️ پرچم سرور را وارد کنید (مثال: 🇮🇷):',$cancelKey);
     setUser('addServerFlag' . json_encode($data,JSON_UNESCAPED_UNICODE));
     exit();
 }
 if(preg_match('/^addServerFlag(.*)/',$userInfo['step'], $match) and $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
     $data = json_decode($match[1],true);
     $data['flag'] = $text;
-    sendMessage("مرحله پنجم:
+    sendMessage("مرحله 3 از 4:
+▪️ آدرس پنل Sanaei XUI را وارد کنید:
 
-▪️لطفا آدرس پنل x-ui رو به صورت مثال زیر وارد کن:
-
-❕https://yourdomain.com:54321
-❕https://yourdomain.com:54321/path
-❗️http://125.12.12.36:54321
-❗️http://125.12.12.36:54321/path
-
-اگر سرور مورد نظر با دامنه و ssl هست از مثال ( ❕) استفاده کنید
-اگر سرور مورد نظر با ip و بدون ssl هست از مثال ( ❗️) استفاده کنید
-⁮⁮ ⁮⁮ ⁮⁮ ⁮⁮
-");
+مثال:
+• https://yourdomain.com:54321
+• http://125.12.12.36:54321",$cancelKey);
     setUser('addServerPanelUrl' . json_encode($data,JSON_UNESCAPED_UNICODE));
     exit();
 }
 if(preg_match('/^addServerPanelUrl(.*)/',$userInfo['step'],$match) and $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
     $data = json_decode($match[1],true);
     $data['panel_url'] = $text;
-    if($userInfo['temp'] == "addNewMarzbanPanel"){
-        $data['panel_ip'] = "/empty";
-        $data['sni'] = "/empty";
-        $data['header_type'] = "/empty";
-        $data['response_header'] = "/empty";
-        $data['request_header'] = "/empty";
-        $data['security'] = "/empty";
-        $data['tls_setting'] = "/empty";
-        
-        setUser('addServerPanelUser' . json_encode($data, JSON_UNESCAPED_UNICODE));
-        sendMessage( "مرحله ششم: 
-    ▪️لطفا یوزر پنل را وارد کنید:");
-    
-        exit();
-    }else{
-        setUser('addServerIp' . json_encode($data,JSON_UNESCAPED_UNICODE));
-        sendMessage( "🔅 لطفا ip یا دامنه تانل شده پنل را وارد کنید:
-    
-    نمونه: 
-    91.257.142.14
-    sub.domain.com
-    ❗️در صورتی که میخواید چند دامنه یا ip کانفیگ بگیرید باید زیر هم بنویسید و برای ربات بفرستین:
-        \n\n🔻برای خالی گذاشتن متن /empty را وارد کنید");
-        exit();
-    }
-}
-if(preg_match('/^addServerIp(.*)/',$userInfo['step'],$match) and $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
-    $data = json_decode($match[1],true);
-    $data['panel_ip'] = $text;
-    setUser('addServerSni' . json_encode($data, JSON_UNESCAPED_UNICODE));
-    sendMessage( "🔅 لطفا sni پنل را وارد کنید\n\n🔻برای خالی گذاشتن متن /empty را وارد کنید");
-    exit();
-}
-if(preg_match('/^addServerSni(.*)/',$userInfo['step'],$match) and $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
-    $data = json_decode($match[1],true);
-    $data['sni'] = $text;
-    setUser('addServerHeaderType' . json_encode($data, JSON_UNESCAPED_UNICODE));
-    sendMessage( "🔅 اگر  از header type استفاده میکنید لطفا http را تایپ کنید:\n\n🔻برای خالی گذاشتن متن /empty را وارد کنید");
-    exit();
-}
-if(preg_match('/^addServerHeaderType(.*)/',$userInfo['step'],$match) and $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
-    $data = json_decode($match[1],true);
-    $data['header_type'] = $text;
-    setUser('addServerRequestHeader' . json_encode($data, JSON_UNESCAPED_UNICODE));
-    sendMessage( "🔅اگر از هدر استفاده میکنید لطفا آدرس رو به این صورت Host:test.com وارد کنید و به جای test.com آدرس دلخواه بزنید:\n\n🔻برای خالی گذاشتن متن /empty را وارد کنید");
-    exit();
-}
-if(preg_match('/^addServerRequestHeader(.*)/',$userInfo['step'],$match) and $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
-    $data = json_decode($match[1],true);
-    $data['request_header'] = $text;
-    setUser('addServerResponseHeader' . json_encode($data, JSON_UNESCAPED_UNICODE));
-    sendMessage( "🔅 لطفا response header پنل را وارد کنید\n\n🔻برای خالی گذاشتن متن /empty را وارد کنید");
-    exit();
-}
-if(preg_match('/^addServerResponseHeader(.*)/',$userInfo['step'],$match) and $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
-    $data = json_decode($match[1],true);
-    $data['response_header'] = $text;
-    setUser('addServerSecurity' . json_encode($data, JSON_UNESCAPED_UNICODE));
-    sendMessage( "🔅 لطفا security پنل را وارد کنید
-
-⚠️ توجه: برای استفاده از tls یا xtls لطفا کلمه tls یا xtls رو تایپ کنید در غیر این صورت 👇
-\n🔻برای خالی گذاشتن متن /empty را وارد کنید");
-exit();
-}
-if(preg_match('/^addServerSecurity(.*)/',$userInfo['step'],$match) and $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
-    $data = json_decode($match[1],true);
-    $data['security'] = $text;
-    setUser('addServerTlsSetting' . json_encode($data, JSON_UNESCAPED_UNICODE));
-    sendMessage("
-    🔅 لطفا tls|xtls setting پنل را وارد کنید🔻برای خالی گذاشتن متن /empty را وارد کنید 
-
-⚠️ لطفا تنظیمات سرتیفیکیت رو با دقت انجام بدید مثال:
-▫️serverName: yourdomain
-▫️certificateFile: /root/cert.crt
-▫️keyFile: /root/private.key
-\n
-"
-        .'<b>tls setting:</b> <code>{"serverName": "","certificates": [{"certificateFile": "","keyFile": ""}]}</code>' . "\n"
-        .'<b>xtls setting:</b> <code>{"serverName": "","certificates": [{"certificateFile": "","keyFile": ""}],"alpn": []}</code>', null, "HTML");
-
-    exit();
-}
-if(preg_match('/^addServerTlsSetting(.*)/',$userInfo['step'],$match) and $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
-    $data = json_decode($match[1],true);
-    $data['tls_setting'] = $text;
     setUser('addServerPanelUser' . json_encode($data, JSON_UNESCAPED_UNICODE));
-    sendMessage( "مرحله ششم: 
-▪️لطفا یوزر پنل را وارد کنید:");
-
+    sendMessage("مرحله 4 از 4:
+▪️ نام کاربری پنل را وارد کنید:",$cancelKey);
     exit();
 }
 if(preg_match('/^addServerPanelUser(.*)/',$userInfo['step'],$match) and $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
     $data = json_decode($match[1],true);
     $data['panel_user'] = $text;
     setUser('addServerPanePassword' . json_encode($data, JSON_UNESCAPED_UNICODE));
-    sendMessage( "مرحله هفتم: 
-▪️لطفا پسورد پنل را وارد کنید:");
-exit();
+    sendMessage("▪️ رمز عبور پنل را وارد کنید:",$cancelKey);
+    exit();
 }
 if(preg_match('/^addServerPanePassword(.*)/',$userInfo['step'],$match) and $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)){
-    sendMessage("⏳ در حال ورود به اکانت ...");
+    sendMessage("⏳ در حال بررسی اتصال به پنل...");
     $data = json_decode($match[1],true);
     $title = $data['title'];
-    $ucount = $data['ucount'];
-    $remark = $data['remark'];
     $flag = $data['flag'];
-
     $panel_url = $data['panel_url'];
-    $ip = $data['panel_ip']!="/empty"?$data['panel_ip']:"";
-    $sni = $data['sni']!="/empty"?$data['sni']:"";
-    $header_type = $data['header_type']!="/empty"?$data['header_type']:"none";
-    $request_header = $data['request_header']!="/empty"?$data['request_header']:"";
-    $response_header = $data['response_header']!="/empty"?$data['response_header']:"";
-    $security = $data['security']!="/empty"?$data['security']:"none";
-    $tlsSettings = $data['tls_setting']!="/empty"?$data['tls_setting']:"";
     $serverName = $data['panel_user'];
     $serverPass = $text;
     
+    // Test connection with new API
+    $loginUrl = $panel_url . '/api/admin/token';
+    $postFields = array(
+        'username' => $serverName,
+        'password' => $serverPass
+    );
     
-    $loginResponse['success'] = false;
-    if($userInfo['temp'] == "addNewMarzbanPanel"){
-        $loginUrl = $panel_url .'/api/admin/token';
-        $postFields = array(
-            'username' => $serverName,
-            'password' => $serverPass
-        );
-        
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $loginUrl);
-        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($curl, CURLOPT_POST, 1);
-        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 3);
-        curl_setopt($curl, CURLOPT_TIMEOUT, 3); 
-        curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($postFields));
-        curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-                'Content-Type: application/x-www-form-urlencoded',
-                'accept: application/json'
-            ));
-        $response = json_decode(curl_exec($curl),true);
-        
-        if(curl_error($curl)){
-            $loginResponse = ['success' => false, 'error'=>curl_error($curl)];
-        }
-        curl_close($curl);
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_URL, $loginUrl);
+    curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($curl, CURLOPT_POST, 1);
+    curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 10);
+    curl_setopt($curl, CURLOPT_TIMEOUT, 10); 
+    curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($postFields));
+    curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+        'Content-Type: application/x-www-form-urlencoded',
+        'accept: application/json'
+    ));
+    $response = curl_exec($curl);
+    $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+    $error = curl_error($curl);
+    curl_close($curl);
     
-        if(isset($response['access_token'])){
-            $loginResponse['success'] = true;
-        }
-    }else{
-        $loginUrl = $panel_url . '/login';
-        $postFields = array(
-            "username" => $serverName,
-            "password" => $serverPass
-            );
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $loginUrl);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 15);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 15); 
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postFields));
-        $loginResponse = json_decode(curl_exec($ch),true);
-        curl_close($ch);
-        
-    }
-    if(!$loginResponse['success']){
+    $loginResponse = json_decode($response, true);
+    
+    if($httpCode != 200 || !isset($loginResponse['access_token'])){
         setUser('addServerPanelUser' . json_encode($data, JSON_UNESCAPED_UNICODE));
-        sendMessage( "
-⚠️ با خطا مواجه شدی ! 
-
-برای رفع این مشکل روی لینک زیر بزن و ویس رو با دقت گوش کن 👇
-
-⛔️🔗 https://t.me/wizwizch/186
-
-مجدد نام کاربری پنل را وارد کنید:
-⁮⁮ ⁮⁮
-        ");
+        sendMessage("❌ خطا در اتصال به پنل!\n\nلطفا موارد زیر را بررسی کنید:\n• آدرس پنل صحیح باشد\n• نام کاربری و رمز عبور صحیح باشد\n• پنل Sanaei XUI آخرین نسخه باشد\n\n🔹 مجدد نام کاربری را وارد کنید:",$cancelKey);
         exit();
     }
-    $stmt = $connection->prepare("INSERT INTO `server_info` (`title`, `ucount`, `remark`, `flag`, `active`)
-                                                    VALUES (?,?,?,?,1)");
+    
+    // Generate default values
+    $remark = "server_" . time();
+    $ucount = "1000";
+    
+    // Insert into server_info
+    $stmt = $connection->prepare("INSERT INTO `server_info` (`title`, `ucount`, `remark`, `flag`, `active`) VALUES (?,?,?,?,1)");
     $stmt->bind_param("siss", $title, $ucount, $remark, $flag);
     $stmt->execute();
     $rowId = $stmt->insert_id;
     $stmt->close();
 
-    $stmt = $connection->prepare("INSERT INTO `server_config` (`id`, `panel_url`, `ip`, `sni`, `header_type`, `request_header`, `response_header`, `security`, `tlsSettings`, `username`, `password`)
-                                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("issssssssss", $rowId, $panel_url, $ip, $sni, $header_type, $request_header, $response_header, $security, $tlsSettings, $serverName, $serverPass);
+    // Insert into server_config with default values and type = sanaei
+    $stmt = $connection->prepare("INSERT INTO `server_config` (`id`, `panel_url`, `ip`, `sni`, `header_type`, `request_header`, `response_header`, `security`, `tlsSettings`, `type`, `username`, `password`) VALUES (?, ?, '', '', 'none', '', '', 'none', '', 'sanaei', ?, ?)");
+    $stmt->bind_param("isss", $rowId, $panel_url, $serverName, $serverPass);
     $stmt->execute();
-    $rowId = $stmt->insert_id;
     $stmt->close();
 
-    sendMessage(" تبریک ; سرورت رو ثبت کردی 🥹",$removeKeyboard);
-    if($userInfo['temp'] == "addNewMarzbanPanel"){
-        $stmt = $connection->prepare("UPDATE `server_config` SET `type` = 'marzban' WHERE `id`=?");
-        $stmt->bind_param("i",$rowId);
-        $stmt->execute();
-        $stmt->close();
-        
-        $keys = getServerListKeys();
-        sendMessage("☑️ مدیریت سرور ها",$keys);
-    }else{
-        sendMessage("
-    
-🔰 نکته مهم: ( پنل x-ui خود را به آخرین نسخه آپدیت کنید ) 
-
-❤️ اگر از پنل سنایی استفاده میکنید لطفا نوع پنل را ( سنایی ) انتخاب کنید
-🧡 اگر از پنل علیرضا استفاده میکنید لطفا نوع پنل را ( علیرضا ) انتخاب کنید
-💚 اگر از پنل نیدوکا استفاده میکنید لطفا نوع پنل را ( ساده ) انتخاب کنید 
-💙 اگر از پنل چینی استفاده میکنید لطفا نوع پنل را ( ساده ) انتخاب کنید 
-⁮⁮ ⁮⁮ ⁮⁮ ⁮⁮
-📣 حتما نوع پنل را انتخاب کنید وگرنه براتون مشکل ساز میشه !
-⁮⁮ ⁮⁮ ⁮⁮ ⁮⁮
-    ",json_encode(['inline_keyboard'=>[
-            [['text'=>"ساده",'callback_data'=>"chhangeServerTypenormal_" . $rowId],['text'=>"سنایی",'callback_data'=>"chhangeServerTypesanaei_" . $rowId]],
-            [['text'=>"علیرضا",'callback_data'=>"chhangeServerTypealireza_" . $rowId]]
-            ]]));
-    }
+    sendMessage("✅ سرور با موفقیت ثبت شد!",$removeKeyboard);
+    $keys = getServerListKeys();
+    sendMessage("☑️ مدیریت سرور ها",$keys);
     setUser();
     exit();
 }
