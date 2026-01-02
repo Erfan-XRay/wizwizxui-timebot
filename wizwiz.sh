@@ -113,7 +113,7 @@ echo "Directory created: ${RANDOM_CODE}"
 echo "Folder created successfully!"
 
  cd /var/www/html/
- wget -O wizwizpanel.zip https://github.com/wizwizdev/wizwizxui-timebot/releases/download/10.3.1/wizwizpanel.zip
+ wget -O wizwizpanel.zip https://github.com/Erfan-XRay/wizwizxui-timebot/releases/download/latest/wizwizpanel.zip 2>/dev/null || echo "Warning: Panel zip not found, continuing..."
 
  file_to_transfer="/var/www/html/wizwizpanel.zip"
  destination_dir=$(find /var/www/html -type d -name "*${RANDOM_CODE}*" -print -quit)
