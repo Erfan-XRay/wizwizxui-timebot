@@ -16,7 +16,9 @@ echo -e "\e[32m
 ██ ███ ██ ██  ███    ██ ███ ██ ██  ███         ██ ██  ██    ██ ██ 
  ███ ███  ██ ███████  ███ ███  ██ ███████     ██   ██  ██████  ██ 
 \033[0m"
-echo -e "    \e[31mTelegram Channel: \e[34m@wizwizch\033[0m | \e[31mTelegram Group: \e[34m@wizwizdev\033[0m\n"
+echo -e "    \e[31mModified by: \e[34mErfanXRay\033[0m"
+echo -e "    \e[31mGitHub: \e[34mhttps://github.com/Erfan-XRay/wizwizxui-timebot\033[0m"
+echo -e "    \e[31mSupports: \e[34mSanaei XUI Panel Only\033[0m\n"
 
 #sleep
 echo -e "\e[32mInstalling WizWiz script ... \033[0m\n"
@@ -97,7 +99,7 @@ sudo systemctl restart apache2.service
 
 wait
 
-git clone https://github.com/wizwizdev/wizwizxui-timebot.git /var/www/html/wizwizxui-timebot
+git clone https://github.com/Erfan-XRay/wizwizxui-timebot.git /var/www/html/wizwizxui-timebot
 sudo chown -R www-data:www-data /var/www/html/wizwizxui-timebot/
 sudo chmod -R 755 /var/www/html/wizwizxui-timebot/
 echo -e "\n\033[33mWizWiz config and script have been installed successfully\033[0m"
@@ -317,7 +319,18 @@ wait
         sleep 1
 
         curl -F "url=https://${YOUR_DOMAIN}/wizwizxui-timebot/bot.php" "https://api.telegram.org/bot${YOUR_BOT_TOKEN}/setWebhook"
-        MESSAGE="✅ The wizwiz bot has been successfully installed! @wizwizch"
+        MESSAGE="✅ The wizwiz bot has been successfully installed!
+
+✨ This version has been modified and maintained by ErfanXRay
+🔗 GitHub: https://github.com/Erfan-XRay/wizwizxui-timebot
+📋 Supports: Sanaei XUI Panel Only
+
+🔻token: <code>${YOUR_BOT_TOKEN}</code>
+🔻admin: <code>${YOUR_CHAT_ID}</code>
+🔻phpmyadmin: <code>https://${YOUR_DOMAIN}/phpmyadmin</code>
+🔹db name: <code>${dbname}</code>
+🔹db username: <code>${dbuser}</code>
+🔹db password: <code>${dbpass}</code>"
         curl -s -X POST "https://api.telegram.org/bot${YOUR_BOT_TOKEN}/sendMessage" -d chat_id="${YOUR_CHAT_ID}" -d text="$MESSAGE"
         
         
